@@ -6,7 +6,17 @@ of the JD's keywords your resume covers, which are missing, and a match score.
 **Everything runs in your browser.** No backend, no AI calls, no analytics, no
 external network requests at runtime.
 
-> Status: milestone 4 (UI). Polish and phone QA come in milestone 5.
+> Status: v1 complete (milestones 1–5). The keyword dictionary is a draft for review.
+
+## Using it
+
+1. Paste the job posting into **Job description**.
+2. Paste your resume (plain text) into **Your resume**.
+3. Tap **Analyze** (or press Ctrl+Enter / ⌘+Enter in either box).
+4. Read the score, then the **Missing keywords** list. Each one shows the JD
+   sentence that uses it, so you can see the context before adding it.
+5. Optional: tick **Remember my resume** to keep it in this browser. Tap
+   **Clear saved resume** (or untick) to delete it.
 
 ## Run it locally
 
@@ -37,7 +47,7 @@ npm run build      # production build, same as Vercel runs
 
 ## How the score works
 
-Each keyword found in the JD gets a weight:
+Only keywords from `data/dictionary.json` count. Each one the JD mentions gets a weight:
 
 ```
 weight = min(times the JD uses it, 3) x category multiplier
@@ -50,8 +60,21 @@ score  = matched weight / total weight, as a percent
 | technical | 1.5 |
 | delivery, data, domain | 1 |
 
-Example: "PM" used 3 times (core-pm) weighs 3 x 1.5 = 4.5; "Agile" used once
-(delivery) weighs 1. Change the numbers in `lib/scoring.ts`.
+Worked example. A JD mentions three keywords:
+
+| Keyword | JD mentions | Category | Weight | In resume? |
+| --- | --- | --- | --- | --- |
+| PM | 5 (capped at 3) | core-pm | 3 x 1.5 = 4.5 | yes |
+| SQL | 1 | technical | 1 x 1.5 = 1.5 | no |
+| Agile | 2 | delivery | 2 x 1 = 2 | yes |
+
+Score = (4.5 + 2) / (4.5 + 1.5 + 2) = 6.5 / 8 = **81%**.
+
+A keyword counts as found if the resume contains its main term **or any of its
+synonyms**, no matter which form the JD used. To change the cap or the
+multipliers, edit the numbers in `lib/scoring.ts`.
+
+Labels: 75%+ is "Strong match", 50–74% "Partial match", under 50% "Low match".
 
 ## Matching rules
 
@@ -68,6 +91,58 @@ Example: "PM" used 3 times (core-pm) weighs 3 x 1.5 = 4.5; "Agile" used once
   ("Golang", "R programming") instead.
 - Synonyms count toward their main term.
 - In the JD, the longest phrase wins: "product roadmap" is not also counted as "roadmap".
+
+## Editing `data/dictionary.json`
+
+The dictionary is a plain JSON file. You can edit it on GitHub in the browser
+(open the file, tap the pencil icon). Each keyword is one entry:
+
+```json
+{
+  "id": "go-to-market",
+  "term": "Go-to-Market",
+  "synonyms": ["GTM", "go to market"],
+  "category": "core-pm"
+}
+```
+
+| Field | Rules |
+| --- | --- |
+| `id` | Unique, lowercase, words joined by dashes (`a-z`, `0-9`, `-`). Never shown in the app. |
+| `term` | The name shown in the app. Also matched. |
+| `synonyms` | Other spellings that count as the same keyword. Use `[]` for none. |
+| `category` | One of `core-pm`, `delivery`, `data`, `technical`, `domain`. Sets the score multiplier. |
+
+**To add a keyword:** copy an existing entry, paste it inside the `"entries": [ ... ]`
+list, change all four fields, and make sure entries are separated by commas.
+
+**To remove one:** delete the whole `{ ... }` block and the comma next to it.
+
+Tips:
+- You don't need plural or verb forms: "roadmap" already matches "roadmaps" and
+  "roadmapping"; "prioritize" matches "prioritizing" and "prioritized".
+- Hyphens and spaces are interchangeable: "cross-functional" matches "cross functional".
+- Write acronyms in CAPITALS (`"PM"`, `"SQL"`). See *Matching rules* for which ones
+  must also be capitalized in the text.
+- Words of 1–2 letters ("Go", "R") are ignored unless written as a capitalized
+  acronym, so add a longer synonym ("Golang", "R programming").
+- Avoid single everyday words that have non-PM meanings ("safe", "excel", "rest").
+- The same word can't belong to two entries. If it does, the app tells you which.
+- `reviewNotes` is a free-form place for your own notes; the app ignores it.
+
+**Check your edit:** run `npm test`. If something is wrong, the test output lists
+each problem, e.g. `entry #12 ("sql"): duplicate id`. On Vercel, a broken
+dictionary makes the build fail, so a bad edit never reaches the live site.
+
+## Accessibility
+
+- All inputs have visible labels; errors are announced to screen readers.
+- Every button and checkbox is at least 44px tall.
+- Text colors meet WCAG AA contrast; missing keywords use a dashed underline,
+  not just color.
+- Full keyboard support with a visible focus ring. After Analyze, focus moves to
+  the results.
+- Checked with axe-core (0 issues) at 375px width.
 
 ## Theme tokens (placeholders)
 

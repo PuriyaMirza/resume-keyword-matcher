@@ -8,10 +8,10 @@ function timesLabel(n: number) {
 export function MissingList({ items }: { items: ScoredKeyword[] }) {
   return (
     <section className="card" aria-labelledby="missing-heading">
-      <h2 id="missing-heading" className="section-title">
+      <h3 id="missing-heading" className="section-title">
         <CircleX size={20} aria-hidden="true" className="icon-missing" />
         Missing keywords ({items.length})
-      </h2>
+      </h3>
       {items.length === 0 ? (
         <p className="muted">Nothing missing. Your resume covers every keyword found.</p>
       ) : (
@@ -42,10 +42,10 @@ export function MissingList({ items }: { items: ScoredKeyword[] }) {
 export function MatchedList({ items }: { items: ScoredKeyword[] }) {
   return (
     <section className="card" aria-labelledby="matched-heading">
-      <h2 id="matched-heading" className="section-title">
+      <h3 id="matched-heading" className="section-title">
         <CircleCheck size={20} aria-hidden="true" className="icon-matched" />
         Matched keywords ({items.length})
-      </h2>
+      </h3>
       {items.length === 0 ? (
         <p className="muted">No keywords matched yet.</p>
       ) : (

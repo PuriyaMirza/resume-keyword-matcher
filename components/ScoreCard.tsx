@@ -11,7 +11,7 @@ export function ScoreCard({ result }: { result: AnalysisResult }) {
   if (result.score === null) {
     return (
       <section className="card" aria-labelledby="score-heading">
-        <h2 id="score-heading">No keywords found</h2>
+        <h3 id="score-heading">No keywords found</h3>
         <p className="muted">
           None of the dictionary&apos;s keywords appear in this job description. Check that you pasted
           the full posting.
@@ -21,7 +21,7 @@ export function ScoreCard({ result }: { result: AnalysisResult }) {
   }
   return (
     <section className="card score-card" aria-labelledby="score-heading">
-      <h2 id="score-heading" className="visually-hidden">Match score</h2>
+      <h3 id="score-heading" className="visually-hidden">Match score</h3>
       <p className="score-value">
         {result.score}
         <span className="score-unit">%</span>
