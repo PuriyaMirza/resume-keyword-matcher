@@ -1,20 +1,29 @@
 # Resume Keyword Matcher
 
-Paste a job description (JD) and your resume as plain text. The app shows which
-of the JD's keywords your resume covers, which are missing, and a match score.
+Paste a job description (JD) and your resume as plain text. The app gives you a
+match score and a **resume plan**: a ranked list of the JD's keywords to add, to
+show more clearly, and that you already cover.
 
 **Everything runs in your browser.** No backend, no AI calls, no analytics, no
 external network requests at runtime.
 
-> Status: v1 complete (milestones 1–5). The keyword dictionary is a draft for review.
+> Status: v1 complete (milestones 1–5), plus the resume plan. The keyword dictionary is a draft for review.
 
 ## Using it
 
 1. Paste the job posting into **Job description**.
 2. Paste your resume (plain text) into **Your resume**.
 3. Tap **Analyze** (or press Ctrl+Enter / ⌘+Enter in either box).
-4. Read the score, then the **Missing keywords** list. Each one shows the JD
-   sentence that uses it, so you can see the context before adding it.
+4. Read the score, then **Your resume plan**. It has three parts, most important
+   keyword first in each:
+   - **Add if true**: keywords your resume doesn't mention. Only add one if it
+     honestly reflects your experience.
+   - **Strengthen**: keywords you mention, but only in your skills list, or only
+     once when the posting stresses them.
+   - **Already covered**: nothing to do.
+
+   Each keyword shows a priority (High / Medium / Low), why it matters ("Listed as
+   required", "In the job title"...), and the JD sentence that uses it.
 5. Optional: tick **Remember my resume** to keep it in this browser. Tap
    **Clear saved resume** (or untick) to delete it.
 
@@ -34,23 +43,43 @@ npm run build      # production build, same as Vercel runs
 | Path | What it is |
 | --- | --- |
 | `app/` | Next.js App Router pages, layout, and CSS |
-| `components/` | UI pieces: inputs, score card, keyword lists, highlighted JD |
+| `components/` | UI pieces: inputs, score card, resume plan, highlighted JD |
 | `app/tokens.css` | Theme variables (placeholder values; see below) |
 | `lib/normalize.ts` | Lowercasing, quote/dash cleanup, tokens, light stemming |
 | `lib/phraseMatcher.ts` | Whole-word and multi-word phrase matching |
 | `lib/extractors/` | Keyword extractors (`dictionary.ts` now, TF-IDF later) |
-| `lib/match.ts` | Compares JD keywords with the resume |
-| `lib/scoring.ts` | Score weights (edit here to tune the score) |
+| `lib/headings.ts` | Finds section heading lines (shared by the JD and resume) |
+| `lib/jdStructure.ts` | Tags each part of the JD: title, required, responsibilities, nice-to-have, company text |
+| `lib/resumeStructure.ts` | Tags each part of the resume: skills, summary, experience, other |
+| `lib/match.ts` | Compares JD keywords with the resume and builds the resume plan |
+| `lib/scoring.ts` | Score weights and priority tiers (edit here to tune them) |
 | `data/dictionary.json` | Keyword dictionary (135-term draft, reviewed once) |
 | `corpus/` | Reserved for a future TF-IDF extractor |
 | `tests/` | Vitest unit tests |
 
 ## How the score works
 
-Only keywords from `data/dictionary.json` count. Each one the JD mentions gets a weight:
+Only keywords from `data/dictionary.json` count. Each mention in the JD is worth
+more or less depending on **where** it is:
+
+| Where in the JD | Multiplier |
+| --- | --- |
+| Job title | 2.5 |
+| Requirements ("Requirements", "What you bring", "Qualifications"...) | 1.5 |
+| Responsibilities ("What you'll do", "About the role"...) | 1.25 |
+| Anywhere else (text before any heading) | 1 |
+| Nice-to-have ("Nice to have", "Preferred qualifications", "Bonus"...) | 0.6 |
+| Company or benefits text ("About us", "Benefits", "EEO"...) | 0.4 |
+
+A sentence's own words can override its section: "SQL is a plus" counts as
+nice-to-have even under Requirements, and "A/B testing is required" counts as
+required even under Nice to have. This never changes the job title, and never
+lifts company or benefits text.
+
+Each keyword gets a weight:
 
 ```
-weight = min(times the JD uses it, 3) x category multiplier
+weight = category multiplier x (sum of its 3 best mentions)
 score  = matched weight / total weight, as a percent
 ```
 
@@ -60,21 +89,60 @@ score  = matched weight / total weight, as a percent
 | technical | 1.5 |
 | delivery, data, domain | 1 |
 
-Worked example. A JD mentions three keywords:
+Only the 3 best mentions count, so a word repeated 10 times in the company blurb
+can't outweigh one real requirement.
 
-| Keyword | JD mentions | Category | Weight | In resume? |
+Worked example. This JD:
+
+```
+Product Manager
+Requirements
+- 3+ years as a product manager.
+- Strong SQL.
+- Agile delivery experience.
+Responsibilities
+- Run Agile ceremonies.
+Nice to have
+- OKRs.
+About us
+We are an Agile company. Agile is in our name.
+```
+
+| Keyword | Mentions | Category | Weight | In resume? |
 | --- | --- | --- | --- | --- |
-| PM | 5 (capped at 3) | core-pm | 3 x 1.5 = 4.5 | yes |
-| SQL | 1 | technical | 1 x 1.5 = 1.5 | no |
-| Agile | 2 | delivery | 2 x 1 = 2 | yes |
+| PM | title 2.5, required 1.5 | core-pm | (2.5 + 1.5) x 1.5 = 6 | yes |
+| SQL | required 1.5 | technical | 1.5 x 1.5 = 2.25 | no |
+| Agile | required 1.5, responsibilities 1.25, company 0.4, company 0.4 (best 3 count) | delivery | (1.5 + 1.25 + 0.4) x 1 = 3.15 | yes |
+| OKR | nice-to-have 0.6 | core-pm | 0.6 x 1.5 = 0.9 | no |
 
-Score = (4.5 + 2) / (4.5 + 1.5 + 2) = 6.5 / 8 = **81%**.
+Score = (6 + 3.15) / (6 + 2.25 + 3.15 + 0.9) = 9.15 / 12.3 = **74%**.
 
 A keyword counts as found if the resume contains its main term **or any of its
-synonyms**, no matter which form the JD used. To change the cap or the
-multipliers, edit the numbers in `lib/scoring.ts`.
+synonyms**, no matter which form the JD used. To change any of these numbers,
+edit `lib/scoring.ts`.
 
 Labels: 75%+ is "Strong match", 50–74% "Partial match", under 50% "Low match".
+
+## How the plan works
+
+Each keyword gets a priority from its weight: **High** at 2.25 or more,
+**Medium** at 1 or more, **Low** below 1. In the example above, PM, SQL and Agile
+are High and OKR is Low.
+
+Then it goes into one group:
+
+- **Add if true**: the resume doesn't mention it.
+- **Strengthen**: the resume mentions it, it is High or Medium, and either
+  - it only appears under a skills heading ("Skills", "Tools", "Core
+    competencies"...). Show it in an experience bullet instead; or
+  - it is High and appears only once. Add it to your summary or a recent role.
+- **Already covered**: everything else the resume mentions. Low-priority
+  keywords never need strengthening.
+
+The app finds resume sections the same way as JD sections: a short line such as
+"Experience", "Skills" or "Summary". If your resume has no headings, the "only
+in skills" rule is skipped. Each group is sorted by weight, then by how often
+the JD mentions the keyword, then A to Z.
 
 ## Matching rules
 
@@ -140,6 +208,7 @@ dictionary makes the build fail, so a bad edit never reaches the live site.
 - Every button and checkbox is at least 44px tall.
 - Text colors meet WCAG AA contrast; missing keywords use a dashed underline,
   not just color.
+- Priorities are written out (High / Medium / Low), not shown by color alone.
 - Full keyboard support with a visible focus ring. After Analyze, focus moves to
   the results.
 - Checked with axe-core (0 issues) at 375px width.
