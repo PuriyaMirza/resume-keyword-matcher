@@ -30,7 +30,7 @@ npm run build      # production build, same as Vercel runs
 | `lib/extractors/` | Keyword extractors (`dictionary.ts` now, TF-IDF later) |
 | `lib/match.ts` | Compares JD keywords with the resume |
 | `lib/scoring.ts` | Score weights (edit here to tune the score) |
-| `data/dictionary.json` | Keyword dictionary (148-term DRAFT, needs your review) |
+| `data/dictionary.json` | Keyword dictionary (135-term draft, reviewed once) |
 | `corpus/` | Reserved for a future TF-IDF extractor |
 | `tests/` | Vitest unit tests |
 

@@ -1,28 +1,7 @@
 {
   "status": "draft",
-  "note": "DRAFT for review. Not verified. Seeded by Claude; edit freely. See reviewNotes for terms flagged as uncertain.",
-  "reviewNotes": {
-    "product-management": "\"PM\" can also mean project manager or program manager.",
-    "customer-centric": "Soft-skill phrase; common in JDs but vague.",
-    "communication-skills": "Soft skill. Bare \"communication\" left out on purpose (too common).",
-    "decision-making": "Soft skill; may appear in almost any JD.",
-    "executive-communication": "\"executive stakeholders\" may overlap with stakeholder-management in meaning.",
-    "dependency-management": "Bare \"dependencies\" can be a software term.",
-    "scaled-agile": "Bare \"SAFe\" left out because it would match the word \"safe\".",
-    "sprint-planning": "Bare \"sprint\" may match \"sprint\" used loosely.",
-    "backlog-management": "Bare \"backlog\" can mean an order backlog in ops roles.",
-    "amplitude": "Also a physics/audio word.",
-    "spreadsheets": "Bare \"Excel\" left out because \"excel at\" would match.",
-    "engagement": "Bare \"engagement\" also means employee or client engagement.",
-    "retention": "Could mean data retention or employee retention.",
-    "machine-learning": "\"ML\" only matches in capitals, so lowercase \"ml\" (millilitres) is ignored.",
-    "api": "Bare \"REST\" left out because \"the rest of\" would match.",
-    "technical-background": "\"computer science\" may be an education requirement, not a skill.",
-    "crm": "Salesforce/HubSpot are tools, grouped under CRM for simplicity.",
-    "compliance": "Bare \"compliance\" is broad.",
-    "javascript": "\"JS\" is case-insensitive.",
-    "conversion-rate": "Bare \"conversion\" is broad."
-  },
+  "note": "DRAFT for review. Not verified. Seeded by Claude; edit freely. Reviewed uncertain terms on 2026-11-12; add notes to reviewNotes as needed.",
+  "reviewNotes": {},
   "entries": [
     {
       "id": "product-management",
@@ -265,38 +244,11 @@
       "category": "core-pm"
     },
     {
-      "id": "customer-centric",
-      "term": "customer-centric",
-      "synonyms": [
-        "customer centricity",
-        "customer obsession",
-        "customer-obsessed"
-      ],
-      "category": "core-pm"
-    },
-    {
       "id": "influence-without-authority",
       "term": "influence without authority",
       "synonyms": [
         "influencing without authority",
         "lead without authority"
-      ],
-      "category": "core-pm"
-    },
-    {
-      "id": "communication-skills",
-      "term": "communication skills",
-      "synonyms": [
-        "written communication",
-        "verbal communication"
-      ],
-      "category": "core-pm"
-    },
-    {
-      "id": "decision-making",
-      "term": "decision-making",
-      "synonyms": [
-        "decision making"
       ],
       "category": "core-pm"
     },
@@ -490,14 +442,6 @@
       "category": "delivery"
     },
     {
-      "id": "scaled-agile",
-      "term": "Scaled Agile Framework",
-      "synonyms": [
-        "SAFe framework"
-      ],
-      "category": "delivery"
-    },
-    {
       "id": "project-management",
       "term": "project management",
       "synonyms": [
@@ -512,15 +456,6 @@
         "program manager",
         "technical program manager",
         "TPM"
-      ],
-      "category": "delivery"
-    },
-    {
-      "id": "dependency-management",
-      "term": "dependency management",
-      "synonyms": [
-        "dependencies",
-        "cross-team dependencies"
       ],
       "category": "delivery"
     },
@@ -700,12 +635,6 @@
       "category": "data"
     },
     {
-      "id": "amplitude",
-      "term": "Amplitude",
-      "synonyms": [],
-      "category": "data"
-    },
-    {
       "id": "mixpanel",
       "term": "Mixpanel",
       "synonyms": [],
@@ -716,16 +645,6 @@
       "term": "Google Analytics",
       "synonyms": [
         "GA4"
-      ],
-      "category": "data"
-    },
-    {
-      "id": "spreadsheets",
-      "term": "Microsoft Excel",
-      "synonyms": [
-        "Excel spreadsheets",
-        "spreadsheets",
-        "Google Sheets"
       ],
       "category": "data"
     },
@@ -762,23 +681,6 @@
       "term": "churn",
       "synonyms": [
         "churn rate"
-      ],
-      "category": "data"
-    },
-    {
-      "id": "conversion-rate",
-      "term": "conversion rate",
-      "synonyms": [
-        "conversion",
-        "conversions"
-      ],
-      "category": "data"
-    },
-    {
-      "id": "engagement",
-      "term": "user engagement",
-      "synonyms": [
-        "engagement"
       ],
       "category": "data"
     },
@@ -913,14 +815,6 @@
       "category": "technical"
     },
     {
-      "id": "javascript",
-      "term": "JavaScript",
-      "synonyms": [
-        "JS"
-      ],
-      "category": "technical"
-    },
-    {
       "id": "r-language",
       "term": "R",
       "synonyms": [
@@ -989,14 +883,6 @@
         "continuous integration",
         "continuous delivery",
         "continuous deployment"
-      ],
-      "category": "technical"
-    },
-    {
-      "id": "machine-learning",
-      "term": "machine learning",
-      "synonyms": [
-        "ML"
       ],
       "category": "technical"
     },
@@ -1218,14 +1104,6 @@
       "category": "domain"
     },
     {
-      "id": "compliance",
-      "term": "regulatory compliance",
-      "synonyms": [
-        "compliance"
-      ],
-      "category": "domain"
-    },
-    {
       "id": "gdpr",
       "term": "GDPR",
       "synonyms": [
@@ -1266,15 +1144,6 @@
       "synonyms": [
         "ad tech",
         "adtech"
-      ],
-      "category": "domain"
-    },
-    {
-      "id": "crm",
-      "term": "CRM",
-      "synonyms": [
-        "Salesforce",
-        "HubSpot"
       ],
       "category": "domain"
     },
