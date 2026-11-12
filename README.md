@@ -73,7 +73,8 @@ more or less depending on **where** it is:
 
 A heading is a short line on its own, like "Requirements" or "## What you'll do:".
 These are never headings: list items ("- Benefits"), and lines with text after a
-colon ("Location: Remote", "Salary: $100k").
+colon ("Location: Remote", "Salary: $100k"). A line like "Requirements: 5+ years
+of SQL" or "Nice to have: Python" sets the placement for that line only.
 
 The job title is the text after "Job title:" or "Title:" near the top, or after
 "Role:" or "Position:" in the first 5 lines (but not "Position: Full-time").
@@ -152,7 +153,9 @@ Then it goes into one group:
 
 The app finds resume sections the same way as JD sections: a short line such as
 "Experience", "Skills" or "Summary". A line like "Skills: SQL, Python, Jira" also
-counts as a skills list, for that line only. If your resume has no headings, the "only
+counts as a skills list, for that line only. "Tools:", "Tech stack:" or
+"Technologies:" lines inside an experience section describe that job, so they
+stay experience. If your resume has no headings, the "only
 in skills" rule is skipped. Each group is sorted by weight, then by how often
 the JD mentions the keyword, then A to Z.
 

@@ -4,7 +4,7 @@
  * company/benefits text. Pure: same text in, same answer out.
  */
 import { PLACEMENTS, type Placement, type TextSpan } from "./extractors/types";
-import { classifyKey, findSections, headingKey, isBulletLine, lineSpans, sectionAt, type HeadingPatterns, type Section } from "./headings";
+import { classifyKey, findSections, headingKey, inlineHeading, isBulletLine, lineSpans, sectionAt, type HeadingPatterns, type Section } from "./headings";
 import { normalizeText } from "./normalize";
 import { sentenceSpans } from "./snippets";
 
@@ -19,6 +19,8 @@ export interface JdStructure {
   titleSpan: TextSpan | null;
   sections: JdSection[];
   placementAt(offset: number): Placement;
+  /** True inside the title line or a section heading line (used to clean up snippets). */
+  isHeadingLine(offset: number): boolean;
 }
 
 /** Lower number = more important. */
@@ -37,7 +39,7 @@ const exact = (alternatives: string) => new RegExp(`^(?:${alternatives})$`);
  * and "about the role"/"about the job" over the catch-all "about ..." (company text).
  */
 const JD_HEADINGS: HeadingPatterns<SectionPlacement> = [
-  ["preferred", exact("(?:nice to haves?|preferred|desired|desirable|bonus|good to have)(?: skills| experience| qualifications| requirements)?|bonus points|pluses|a plus|extra credit")],
+  ["preferred", exact("bonus points if you have|bonus if you have|its a plus if you have|it is a plus if you have|nice to have but not required|(?:nice to haves?|preferred|desired|desirable|bonus|good to have)(?: skills| experience| qualifications| requirements)?|bonus points|pluses|a plus|extra credit")],
   ["required", exact("requirements|required qualifications|minimum qualifications|basic qualifications|key qualifications|qualifications|minimum requirements|basic requirements|key requirements|required experience|must haves?|what you will need|what you need|what you bring|what we are looking for|who you are|you have|skills(?: and experience)?|required skills|key skills|about you|experience")],
   ["responsibilities", exact("responsibilities|key responsibilities|your responsibilities|what you will do|what you will be doing|what you will be responsible for|the role|about the role|about this role|role overview|your role|duties|key duties|day to day|in this role")],
   // Neutral intros: not company text, not a skill list either.
@@ -123,18 +125,25 @@ export function detectTitle(text: string): TextSpan | null {
   return plain(0);
 }
 
-/** Whole-word, case-insensitive cue list. Hyphens join words inside a phrase ("nice-to-have")
- *  but count as part of the word at the edges, so "non-essential" is not "essential". */
+/** Whole-word, case-insensitive cue list. Hyphens join words inside a phrase ("nice-to-have").
+ *  At the edges, a hyphen joined to a letter makes it part of another word, so
+ *  "non-essential" is not "essential"; "SQL—preferred" (a dash) still matches. */
 const phrase = (p: string) => p.split(" ").join("[\\s-]+");
-const cueRegex = (body: string) => new RegExp(`(?<![\\p{L}\\p{N}-])(?:${body})(?![\\p{L}\\p{N}-])`, "u");
+const cueRegex = (body: string) =>
+  new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}]-)(?:${body})(?![\\p{L}\\p{N}]|-[\\p{L}\\p{N}])`, "u");
 
 const PREFERRED_CUE = cueRegex(
   [
     ...["nice to have", "preferred", "a plus", "is a plus", "bonus", "ideally", "desirable", "good to have", "not required", "optional"].map(phrase),
-    // "No degree required", "no prior experience required"
-    "no(?:[\\s-]+[\\p{L}\\p{N}]+){0,3}?[\\s-]+required",
   ].join("|"),
 );
+/**
+ * "No degree required", "no prior experience required": "no", up to 3 words
+ * (not "is"/"are"), then "required" ending the clause. Not "no-code tools
+ * required" or "there is no question SQL is required".
+ */
+const NO_X_REQUIRED =
+  /(?<![\p{L}\p{N}-])no\s+(?:(?!(?:is|are)\s)[\p{L}\p{N}]+\s+){0,3}required(?=\s*(?:[.,;)]|$))/mu;
 const REQUIRED_CUE = cueRegex(
   [
     ...["required", "must have", "must be", "you must", "essential", "mandatory", "at least"].map(phrase),
@@ -144,8 +153,12 @@ const REQUIRED_CUE = cueRegex(
 
 /** A sentence's own cue, if any. A preferred cue beats a required one ("not required"). */
 export function sentenceCue(sentence: string): "preferred" | "required" | null {
-  const s = normalizeText(sentence);
-  if (PREFERRED_CUE.test(s)) return "preferred";
+  // normalizeText turns every dash into "-"; only a real hyphen joins words,
+  // so em/en dashes become spaces here.
+  const norm = normalizeText(sentence);
+  let s = "";
+  for (let i = 0; i < norm.length; i++) s += norm[i] === "-" && sentence[i] !== "-" ? " " : norm[i];
+  if (PREFERRED_CUE.test(s) || NO_X_REQUIRED.test(s)) return "preferred";
   if (REQUIRED_CUE.test(s)) return "required";
   return null;
 }
@@ -154,15 +167,43 @@ export function analyzeJdStructure(jdText: string): JdStructure {
   const titleSpan = detectTitle(jdText);
   const sections = findSections(jdText, classifyJdHeading, titleSpan);
   const sentences = sentenceSpans(jdText).map((s) => ({ ...s, cue: sentenceCue(jdText.slice(s.start, s.end)) }));
+  const lines = lineSpans(jdText);
+  const lineAt = (offset: number) => lines.find((l) => offset >= l.start && offset <= l.end);
+  const inlineLines = inlineJdHeadings(jdText, lines, titleSpan);
 
   function placementAt(offset: number): Placement {
     if (titleSpan && offset >= titleSpan.start && offset < titleSpan.end) return "title";
-    const section = sectionAt(sections, offset)?.kind ?? "other";
+    // "Requirements: 5+ years of SQL" sets the placement for that line only.
+    const inline = inlineLines.find((l) => offset >= l.start && offset < l.end);
+    const section = inline?.kind ?? sectionAt(sections, offset)?.kind ?? "other";
     // Cues never change company/benefits text: "a plus" there is not a skill ask.
     if (section === "boilerplate") return section;
     const sentence = sentences.find((s) => offset >= s.start && offset < s.end);
     return sentence?.cue ?? section;
   }
 
-  return { titleSpan, sections, placementAt };
+  function isHeadingLine(offset: number): boolean {
+    const line = lineAt(offset);
+    if (!line) return false;
+    if (titleSpan && titleSpan.start >= line.start && titleSpan.start <= line.end) return true;
+    return sections.some((s) => s.start === line.start);
+  }
+
+  return { titleSpan, sections, placementAt, isHeadingLine };
+}
+
+/** Inline heading kinds that can set a line's placement (never company text or the title). */
+const INLINE_KINDS = new Set<SectionPlacement>(["required", "responsibilities", "preferred"]);
+
+/** "Requirements: ...", "Nice to have: ..." lines, with the placement each sets. */
+function inlineJdHeadings(text: string, lines: TextSpan[], titleSpan: TextSpan | null) {
+  const found: Array<TextSpan & { kind: SectionPlacement }> = [];
+  for (const line of lines) {
+    if (titleSpan && titleSpan.start >= line.start && titleSpan.start <= line.end) continue;
+    const inline = inlineHeading(text.slice(line.start, line.end));
+    if (!inline || /^(?:job title|title|position|role)$/.test(inline.key)) continue;
+    const kind = classifyKey(inline.key, JD_HEADINGS);
+    if (kind && INLINE_KINDS.has(kind)) found.push({ ...line, kind });
+  }
+  return found;
 }

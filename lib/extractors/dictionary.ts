@@ -11,14 +11,19 @@ const MAX_SNIPPETS = 3;
  * Up to 3 distinct snippets, taking mentions from the most important part of
  * the JD first (title, then requirements, ...), then in reading order.
  */
-function pickSnippets(jdText: string, spans: TextSpan[], occurrences: Occurrence[]): string[] {
+function pickSnippets(
+  jdText: string,
+  spans: TextSpan[],
+  occurrences: Occurrence[],
+  isHeadingLine: (offset: number) => boolean,
+): string[] {
   const ordered = [...occurrences].sort(
     (a, b) => placementRank(a.placement) - placementRank(b.placement) || a.start - b.start,
   );
   const snippets: string[] = [];
   for (const o of ordered) {
     if (snippets.length >= MAX_SNIPPETS) break;
-    const snippet = snippetAt(jdText, spans, o);
+    const snippet = snippetAt(jdText, spans, o, undefined, isHeadingLine(o.start));
     if (!snippets.includes(snippet)) snippets.push(snippet);
   }
   return snippets;
@@ -75,7 +80,7 @@ export function createDictionaryExtractor(entries: DictionaryEntry[]): KeywordEx
 
       for (const c of grouped.values()) {
         c.placements = sortPlacements(c.occurrences.map((o) => o.placement));
-        c.jdSnippets = pickSnippets(jdText, spans, c.occurrences);
+        c.jdSnippets = pickSnippets(jdText, spans, c.occurrences, structure.isHeadingLine);
       }
 
       return [...grouped.values()].sort(

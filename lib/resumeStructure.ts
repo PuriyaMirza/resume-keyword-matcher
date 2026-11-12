@@ -32,15 +32,24 @@ export function classifyResumeHeading(line: string): ResumePlacement | null {
   return key === null ? null : classifyKey(key, RESUME_HEADINGS);
 }
 
+/** Skills keys that mean a skills list anywhere, even inside an experience section. */
+const ALWAYS_SKILLS = /^(?:skills|technical skills|key skills|core competencies|competencies|areas of expertise)$/;
+
 /**
  * "Skills: SQL, Python, Jira" style lines. Each is a one-line skills section:
  * it does not change which section the following lines belong to.
+ * `always` is false for keys like "Tech stack:" that describe a role when they
+ * sit inside an experience section.
  */
-export function inlineSkillLines(resumeText: string): TextSpan[] {
-  return lineSpans(resumeText).filter((line) => {
+export function inlineSkillLines(resumeText: string): Array<TextSpan & { always: boolean }> {
+  const found: Array<TextSpan & { always: boolean }> = [];
+  for (const line of lineSpans(resumeText)) {
     const inline = inlineHeading(resumeText.slice(line.start, line.end));
-    return inline !== null && classifyKey(inline.key, RESUME_HEADINGS) === "skills";
-  });
+    if (inline && classifyKey(inline.key, RESUME_HEADINGS) === "skills") {
+      found.push({ ...line, always: ALWAYS_SKILLS.test(inline.key) });
+    }
+  }
+  return found;
 }
 
 export function analyzeResumeStructure(resumeText: string): ResumeStructure {
@@ -51,9 +60,11 @@ export function analyzeResumeStructure(resumeText: string): ResumeStructure {
     hasHeadings,
     sections,
     placementAt(offset) {
-      if (inlineSkills.some((l) => offset >= l.start && offset < l.end)) return "skills";
       // Text above the first heading (name, headline) reads like a summary.
-      return sectionAt(sections, offset)?.kind ?? (hasHeadings ? "summary" : "other");
+      const section = sectionAt(sections, offset)?.kind ?? (hasHeadings ? "summary" : "other");
+      const inline = inlineSkills.find((l) => offset >= l.start && offset < l.end);
+      if (inline && (inline.always || section !== "experience")) return "skills";
+      return section;
     },
   };
 }

@@ -23,8 +23,18 @@ export function sentenceSpans(text: string): TextSpan[] {
 
 const BULLET_PREFIX = /^[\s•·▪◦*\-–—]+/;
 
-/** The cleaned-up sentence containing a match, trimmed to maxLen characters. */
-export function snippetAt(text: string, spans: TextSpan[], match: TextSpan, maxLen = 220): string {
+/**
+ * The cleaned-up sentence containing a match, trimmed to maxLen characters.
+ * `headingLine` says the match sits on a markdown heading line, so a leading
+ * "# " is a heading mark, not text ("# of users" keeps its "#").
+ */
+export function snippetAt(
+  text: string,
+  spans: TextSpan[],
+  match: TextSpan,
+  maxLen = 220,
+  headingLine = false,
+): string {
   const span = spans.find((s) => match.start >= s.start && match.start < s.end) ?? match;
   let { start, end } = span;
   let prefix = "";
@@ -40,7 +50,7 @@ export function snippetAt(text: string, spans: TextSpan[], match: TextSpan, maxL
   }
   let body = text.slice(start, end).replace(/\s+/g, " ").trim();
   // Markdown heading marks ("# Title", "**Title**") are not part of the sentence.
-  body = body.replace(/^#{1,6}\s+/, "");
+  if (headingLine) body = body.replace(/^#{1,6}\s+/, "");
   const bold = /^(\*\*|__)(.+)\1$/.exec(body);
   if (bold) body = bold[2];
   body = body.replace(BULLET_PREFIX, "").trim();

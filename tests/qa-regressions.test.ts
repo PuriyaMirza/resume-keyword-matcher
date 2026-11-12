@@ -182,7 +182,7 @@ describe("m3: inline resume skills line", () => {
   });
 
   it("does not change the section of the following lines", () => {
-    const text = "Experience\n- Led teams.\nTools: Jira, SQL\n- Shipped roadmap.";
+    const text = "Experience\n- Led teams.\nSkills: Jira, SQL\n- Shipped roadmap.";
     const s = analyzeResumeStructure(text);
     expect(s.placementAt(text.indexOf("SQL"))).toBe("skills");
     expect(s.placementAt(text.indexOf("roadmap"))).toBe("experience");
@@ -289,5 +289,123 @@ describe("n4: no dead badge rule", () => {
   it("globals.css has no .badge-muted rule", () => {
     const css = readFileSync(path.join(__dirname, "..", "app", "globals.css"), "utf8");
     expect(css).not.toContain(".badge-muted");
+  });
+});
+
+describe("round 3 N1: tighter 'no ... required' cue", () => {
+  it.each([
+    "Experience with no-code tools required.",
+    "Experience with low-code or no-code platforms is required.",
+    "There is no question SQL is required.",
+  ])("%s -> required", (s) => {
+    expect(sentenceCue(s)).toBe("required");
+  });
+
+  it.each(["No degree required.", "no prior experience required", "No prior experience required, SQL helps."])(
+    "%s -> preferred",
+    (s) => {
+      expect(sentenceCue(s)).toBe("preferred");
+    },
+  );
+
+  it("'required' must end the clause", () => {
+    expect(sentenceCue("No travel required for SQL work.")).toBe("required");
+  });
+});
+
+describe("round 3 N2: dash-attached cues", () => {
+  it.each([
+    ["SQL—preferred", "preferred"],
+    ["Tableau—a plus", "preferred"],
+    ["SQL–required", "required"],
+    ["SQL – required", "required"],
+  ])("%s -> %s", (s, cue) => {
+    expect(sentenceCue(s)).toBe(cue);
+  });
+
+  it("hyphenated words still block cues", () => {
+    expect(sentenceCue("SQL is non-essential.")).toBeNull();
+    expect(sentenceCue("A mission-essential system.")).toBeNull();
+    expect(sentenceCue("SQL is a must-have.")).toBe("required");
+  });
+
+  it("works through the JD placement", () => {
+    expect(placementOf("Product Manager\nWe use SQL—preferred.", "SQL")).toBe("preferred");
+  });
+});
+
+describe("round 3 N3: inline tools lines inside experience", () => {
+  const resume = "Experience\nAcme PM 2020-2024\n- Shipped a pricing engine.\nTech stack: SQL, Python";
+
+  it("stay experience", () => {
+    const s = analyzeResumeStructure(resume);
+    expect(s.placementAt(resume.indexOf("SQL"))).toBe("experience");
+    expect(s.placementAt(resume.indexOf("Python"))).toBe("experience");
+  });
+
+  it("give no 'Only in your skills list' advice", () => {
+    const r = matchResume(extractor.extract("Requirements\n- Strong SQL.\n- Strong SQL reporting."), resume);
+    const sql = [...r.plan.strengthen, ...r.plan.covered].find((k) => k.id === "sql")!;
+    expect(sql.resume.placements).toEqual(["experience"]);
+    expect(sql.planReason).not.toBe(PLAN_REASONS.skillsOnly);
+  });
+
+  it("'Tools:' outside experience and 'Skills:' anywhere are skills", () => {
+    const text = "Summary\nTools: SQL\nExperience\n- Led teams.\nKey skills: Python\nTechnologies: Jira";
+    const s = analyzeResumeStructure(text);
+    expect(s.placementAt(text.indexOf("SQL"))).toBe("skills");
+    expect(s.placementAt(text.indexOf("Python"))).toBe("skills");
+    expect(s.placementAt(text.indexOf("Jira"))).toBe("experience");
+  });
+});
+
+describe("round 3 N4: inline JD heading lines", () => {
+  it("set the placement for that line only", () => {
+    const jd = "Product Manager\nResponsibilities\n- Own the roadmap.\nRequirements: 5+ years of SQL and Python.\n- Agile";
+    expect(placementOf(jd, "SQL")).toBe("required");
+    expect(placementOf(jd, "Python")).toBe("required");
+    expect(placementOf(jd, "Agile")).toBe("responsibilities");
+    expect(analyzeJdStructure(jd).sections.map((s) => s.heading)).toEqual(["Responsibilities"]);
+  });
+
+  it.each([
+    ["Responsibilities: own the roadmap", "roadmap", "responsibilities"],
+    ["Nice to have: Python", "Python", "preferred"],
+    ["Qualifications: SQL and Agile", "SQL", "required"],
+  ])("%s", (line, needle, kind) => {
+    expect(placementOf(`Intro text\n${line}\nMore SQL`, needle)).toBe(kind);
+  });
+
+  it("never for company text keys or title prefixes", () => {
+    const jd = "Product Manager\nRequirements\n- SQL\nLocation: Remote, Python team\nBenefits: Agile coaching";
+    expect(placementOf(jd, "Python")).toBe("required");
+    expect(placementOf(jd, "Agile")).toBe("required");
+    expect(placementOf("Product Manager\nAbout us\nSalary: SQL bonus\n", "SQL")).toBe("boilerplate");
+    expect(placementOf("Intro\nRole: SQL Analyst\nMore", "SQL")).toBe("title");
+  });
+
+  it("sentence cues still apply on top", () => {
+    expect(placementOf("Intro\nRequirements: SQL. Python is a plus.\n", "Python")).toBe("preferred");
+  });
+});
+
+describe("round 3 N5: more preferred headings", () => {
+  it.each(["Bonus points if you have:", "Bonus if you have", "It's a plus if you have", "Nice to have but not required"])(
+    "%s -> preferred",
+    (line) => {
+      expect(classifyJdHeading(line)).toBe("preferred");
+    },
+  );
+});
+
+describe("round 3 nit: '#' is kept unless the line is a markdown heading", () => {
+  it("keeps '# of users' in a snippet", () => {
+    const sql = extractor.extract("Product Manager\nAbout the role\n# of users grew with SQL.").find((c) => c.id === "sql")!;
+    expect(sql.jdSnippets).toEqual(["# of users grew with SQL."]);
+  });
+
+  it("still strips the marks on heading and title lines", () => {
+    const [pm] = extractor.extract("# Senior Product Manager\nWe ship.");
+    expect(pm.jdSnippets).toEqual(["Senior Product Manager"]);
   });
 });
