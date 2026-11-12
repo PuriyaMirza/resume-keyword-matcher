@@ -6,7 +6,7 @@ of the JD's keywords your resume covers, which are missing, and a match score.
 **Everything runs in your browser.** No backend, no AI calls, no analytics, no
 external network requests at runtime.
 
-> Status: milestone 3 (draft dictionary). The UI arrives in milestone 4.
+> Status: milestone 4 (UI). Polish and phone QA come in milestone 5.
 
 ## Run it locally
 
@@ -24,6 +24,7 @@ npm run build      # production build, same as Vercel runs
 | Path | What it is |
 | --- | --- |
 | `app/` | Next.js App Router pages, layout, and CSS |
+| `components/` | UI pieces: inputs, score card, keyword lists, highlighted JD |
 | `app/tokens.css` | Theme variables (placeholder values; see below) |
 | `lib/normalize.ts` | Lowercasing, quote/dash cleanup, tokens, light stemming |
 | `lib/phraseMatcher.ts` | Whole-word and multi-word phrase matching |
@@ -104,6 +105,8 @@ to `main` deploys production. No environment variables are needed.
 ## Privacy and safety
 
 - Resume text never leaves your browser.
+- "Remember my resume" is off by default. When on, the resume is kept in this
+  browser's localStorage only. "Clear saved resume" (or unticking the box) deletes it.
 - Test fixtures use synthetic, fake text only. Never commit a real resume.
 - Job description text is treated as untrusted data. It is displayed as plain
   text only, never run as code or HTML. A test checks that instructions written
