@@ -1,13 +1,71 @@
 {
   "status": "draft",
-  "note": "STARTER DRAFT for milestone 2. Milestone 3 replaces this with 120-150 terms for review. Not verified.",
+  "note": "DRAFT for review. Not verified. Seeded by Claude; edit freely. See reviewNotes for terms flagged as uncertain.",
+  "reviewNotes": {
+    "product-management": "\"PM\" can also mean project manager or program manager.",
+    "customer-centric": "Soft-skill phrase; common in JDs but vague.",
+    "communication-skills": "Soft skill. Bare \"communication\" left out on purpose (too common).",
+    "decision-making": "Soft skill; may appear in almost any JD.",
+    "executive-communication": "\"executive stakeholders\" may overlap with stakeholder-management in meaning.",
+    "dependency-management": "Bare \"dependencies\" can be a software term.",
+    "scaled-agile": "Bare \"SAFe\" left out because it would match the word \"safe\".",
+    "sprint-planning": "Bare \"sprint\" may match \"sprint\" used loosely.",
+    "backlog-management": "Bare \"backlog\" can mean an order backlog in ops roles.",
+    "amplitude": "Also a physics/audio word.",
+    "spreadsheets": "Bare \"Excel\" left out because \"excel at\" would match.",
+    "engagement": "Bare \"engagement\" also means employee or client engagement.",
+    "retention": "Could mean data retention or employee retention.",
+    "machine-learning": "\"ML\" only matches in capitals, so lowercase \"ml\" (millilitres) is ignored.",
+    "api": "Bare \"REST\" left out because \"the rest of\" would match.",
+    "technical-background": "\"computer science\" may be an education requirement, not a skill.",
+    "crm": "Salesforce/HubSpot are tools, grouped under CRM for simplicity.",
+    "compliance": "Bare \"compliance\" is broad.",
+    "javascript": "\"JS\" is case-insensitive.",
+    "conversion-rate": "Bare \"conversion\" is broad."
+  },
   "entries": [
     {
       "id": "product-management",
       "term": "Product Management",
       "synonyms": [
+        "product manager",
         "PM",
-        "product manager"
+        "product managers"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-strategy",
+      "term": "product strategy",
+      "synonyms": [
+        "product strategies"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-vision",
+      "term": "product vision",
+      "synonyms": [
+        "vision and strategy"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "roadmap",
+      "term": "roadmap",
+      "synonyms": [
+        "product roadmap",
+        "roadmapping"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "prioritization",
+      "term": "prioritization",
+      "synonyms": [
+        "prioritize",
+        "prioritisation",
+        "prioritise"
       ],
       "category": "core-pm"
     },
@@ -21,44 +79,13 @@
       "category": "core-pm"
     },
     {
-      "id": "kpi",
-      "term": "KPI",
+      "id": "product-launch",
+      "term": "product launch",
       "synonyms": [
-        "key performance indicator"
-      ],
-      "category": "data"
-    },
-    {
-      "id": "okr",
-      "term": "OKR",
-      "synonyms": [
-        "objectives and key results"
+        "launch plan",
+        "launch strategy"
       ],
       "category": "core-pm"
-    },
-    {
-      "id": "sql",
-      "term": "SQL",
-      "synonyms": [],
-      "category": "technical"
-    },
-    {
-      "id": "ab-testing",
-      "term": "A/B testing",
-      "synonyms": [
-        "AB testing",
-        "split testing"
-      ],
-      "category": "data"
-    },
-    {
-      "id": "cross-functional",
-      "term": "cross-functional",
-      "synonyms": [
-        "cross functional",
-        "crossfunctional"
-      ],
-      "category": "delivery"
     },
     {
       "id": "stakeholder-management",
@@ -70,38 +97,826 @@
       "category": "core-pm"
     },
     {
-      "id": "roadmap",
-      "term": "roadmap",
+      "id": "cross-functional",
+      "term": "cross-functional",
       "synonyms": [
-        "roadmapping"
+        "cross functional",
+        "crossfunctional",
+        "cross-team collaboration"
       ],
       "category": "core-pm"
     },
     {
-      "id": "product-roadmap",
-      "term": "product roadmap",
-      "synonyms": [],
-      "category": "core-pm"
-    },
-    {
-      "id": "prioritization",
-      "term": "prioritization",
+      "id": "product-discovery",
+      "term": "product discovery",
       "synonyms": [
-        "prioritize"
+        "continuous discovery",
+        "customer discovery"
       ],
       "category": "core-pm"
     },
     {
-      "id": "product-strategy",
-      "term": "product strategy",
-      "synonyms": [],
+      "id": "user-research",
+      "term": "user research",
+      "synonyms": [
+        "customer research",
+        "customer interviews",
+        "user interviews"
+      ],
       "category": "core-pm"
     },
     {
-      "id": "golang",
-      "term": "Go",
+      "id": "usability-testing",
+      "term": "usability testing",
       "synonyms": [
-        "Golang"
+        "usability tests",
+        "user testing"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "personas",
+      "term": "user personas",
+      "synonyms": [
+        "personas",
+        "persona"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "jtbd",
+      "term": "Jobs to Be Done",
+      "synonyms": [
+        "JTBD",
+        "jobs-to-be-done"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-market-fit",
+      "term": "product-market fit",
+      "synonyms": [
+        "PMF"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "value-proposition",
+      "term": "value proposition",
+      "synonyms": [
+        "value prop"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "competitive-analysis",
+      "term": "competitive analysis",
+      "synonyms": [
+        "competitor analysis",
+        "competitive landscape"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "market-research",
+      "term": "market research",
+      "synonyms": [
+        "market analysis"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "market-sizing",
+      "term": "market sizing",
+      "synonyms": [
+        "TAM",
+        "total addressable market"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "business-case",
+      "term": "business case",
+      "synonyms": [
+        "business cases"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "prd",
+      "term": "PRD",
+      "synonyms": [
+        "product requirements document",
+        "product requirements",
+        "PRDs"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "requirements-gathering",
+      "term": "requirements gathering",
+      "synonyms": [
+        "requirements definition",
+        "gather requirements"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "mvp",
+      "term": "MVP",
+      "synonyms": [
+        "minimum viable product"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-lifecycle",
+      "term": "product lifecycle",
+      "synonyms": [
+        "product life cycle",
+        "product lifecycle management"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "pricing",
+      "term": "pricing",
+      "synonyms": [
+        "pricing strategy",
+        "packaging and pricing"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "monetization",
+      "term": "monetization",
+      "synonyms": [
+        "monetisation",
+        "monetize"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "okr",
+      "term": "OKR",
+      "synonyms": [
+        "objectives and key results"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "customer-centric",
+      "term": "customer-centric",
+      "synonyms": [
+        "customer centricity",
+        "customer obsession",
+        "customer-obsessed"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "influence-without-authority",
+      "term": "influence without authority",
+      "synonyms": [
+        "influencing without authority",
+        "lead without authority"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "communication-skills",
+      "term": "communication skills",
+      "synonyms": [
+        "written communication",
+        "verbal communication"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "decision-making",
+      "term": "decision-making",
+      "synonyms": [
+        "decision making"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "trade-offs",
+      "term": "trade-offs",
+      "synonyms": [
+        "tradeoffs"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-operations",
+      "term": "product operations",
+      "synonyms": [
+        "product ops"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-led-growth",
+      "term": "product-led growth",
+      "synonyms": [
+        "PLG"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "customer-journey",
+      "term": "customer journey",
+      "synonyms": [
+        "user journey",
+        "journey mapping"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "design-thinking",
+      "term": "design thinking",
+      "synonyms": [
+        "human-centered design"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "prototyping",
+      "term": "prototyping",
+      "synonyms": [
+        "prototypes",
+        "prototype"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "wireframes",
+      "term": "wireframes",
+      "synonyms": [
+        "wireframing",
+        "mockups"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "customer-feedback",
+      "term": "customer feedback",
+      "synonyms": [
+        "user feedback",
+        "feedback loops"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "executive-communication",
+      "term": "executive communication",
+      "synonyms": [
+        "executive presentations",
+        "executive stakeholders"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "pnl",
+      "term": "P&L",
+      "synonyms": [
+        "profit and loss",
+        "P&L ownership"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "business-acumen",
+      "term": "business acumen",
+      "synonyms": [
+        "commercial acumen"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "sales-enablement",
+      "term": "sales enablement",
+      "synonyms": [
+        "enable sales"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "agile",
+      "term": "Agile",
+      "synonyms": [
+        "agile methodology",
+        "agile methodologies"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "scrum",
+      "term": "Scrum",
+      "synonyms": [
+        "scrum master"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "kanban",
+      "term": "Kanban",
+      "synonyms": [],
+      "category": "delivery"
+    },
+    {
+      "id": "sprint-planning",
+      "term": "sprint planning",
+      "synonyms": [
+        "sprints",
+        "sprint"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "backlog-management",
+      "term": "backlog management",
+      "synonyms": [
+        "backlog",
+        "backlog grooming",
+        "backlog refinement",
+        "product backlog"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "user-stories",
+      "term": "user stories",
+      "synonyms": [
+        "user story"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "acceptance-criteria",
+      "term": "acceptance criteria",
+      "synonyms": [],
+      "category": "delivery"
+    },
+    {
+      "id": "product-owner",
+      "term": "product owner",
+      "synonyms": [],
+      "category": "delivery"
+    },
+    {
+      "id": "release-management",
+      "term": "release management",
+      "synonyms": [
+        "release planning",
+        "release cadence"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "sdlc",
+      "term": "SDLC",
+      "synonyms": [
+        "software development lifecycle",
+        "software development life cycle"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "waterfall",
+      "term": "waterfall",
+      "synonyms": [],
+      "category": "delivery"
+    },
+    {
+      "id": "scaled-agile",
+      "term": "Scaled Agile Framework",
+      "synonyms": [
+        "SAFe framework"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "project-management",
+      "term": "project management",
+      "synonyms": [
+        "project manager"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "program-management",
+      "term": "program management",
+      "synonyms": [
+        "program manager",
+        "technical program manager",
+        "TPM"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "dependency-management",
+      "term": "dependency management",
+      "synonyms": [
+        "dependencies",
+        "cross-team dependencies"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "risk-management",
+      "term": "risk management",
+      "synonyms": [
+        "risk mitigation"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "jira",
+      "term": "Jira",
+      "synonyms": [],
+      "category": "delivery"
+    },
+    {
+      "id": "confluence",
+      "term": "Confluence",
+      "synonyms": [],
+      "category": "delivery"
+    },
+    {
+      "id": "estimation",
+      "term": "estimation",
+      "synonyms": [
+        "story points",
+        "effort estimation"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "retrospectives",
+      "term": "retrospectives",
+      "synonyms": [
+        "retrospective",
+        "retros"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "standups",
+      "term": "standups",
+      "synonyms": [
+        "standup",
+        "stand-ups",
+        "daily standup"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "scope-management",
+      "term": "scope management",
+      "synonyms": [
+        "scoping",
+        "scope creep"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "time-to-market",
+      "term": "time-to-market",
+      "synonyms": [
+        "speed to market"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "lean",
+      "term": "lean methodology",
+      "synonyms": [
+        "lean startup",
+        "lean principles"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "kpi",
+      "term": "KPI",
+      "synonyms": [
+        "key performance indicator",
+        "key performance indicators"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "product-metrics",
+      "term": "product metrics",
+      "synonyms": [
+        "metrics",
+        "success metrics"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "north-star-metric",
+      "term": "north star metric",
+      "synonyms": [
+        "north star"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "ab-testing",
+      "term": "A/B testing",
+      "synonyms": [
+        "AB testing",
+        "split testing",
+        "multivariate testing"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "experimentation",
+      "term": "experimentation",
+      "synonyms": [
+        "experiments",
+        "experiment design"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "data-analysis",
+      "term": "data analysis",
+      "synonyms": [
+        "analyze data",
+        "analyzing data",
+        "analyse data"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "product-analytics",
+      "term": "product analytics",
+      "synonyms": [
+        "analytics"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "data-driven",
+      "term": "data-driven",
+      "synonyms": [
+        "data driven",
+        "data-informed",
+        "data informed"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "dashboards",
+      "term": "dashboards",
+      "synonyms": [
+        "dashboard"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "tableau",
+      "term": "Tableau",
+      "synonyms": [],
+      "category": "data"
+    },
+    {
+      "id": "looker",
+      "term": "Looker",
+      "synonyms": [],
+      "category": "data"
+    },
+    {
+      "id": "power-bi",
+      "term": "Power BI",
+      "synonyms": [
+        "PowerBI"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "amplitude",
+      "term": "Amplitude",
+      "synonyms": [],
+      "category": "data"
+    },
+    {
+      "id": "mixpanel",
+      "term": "Mixpanel",
+      "synonyms": [],
+      "category": "data"
+    },
+    {
+      "id": "google-analytics",
+      "term": "Google Analytics",
+      "synonyms": [
+        "GA4"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "spreadsheets",
+      "term": "Microsoft Excel",
+      "synonyms": [
+        "Excel spreadsheets",
+        "spreadsheets",
+        "Google Sheets"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "funnel-analysis",
+      "term": "funnel analysis",
+      "synonyms": [
+        "conversion funnel",
+        "funnels",
+        "funnel"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "cohort-analysis",
+      "term": "cohort analysis",
+      "synonyms": [
+        "cohorts",
+        "cohort"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "retention",
+      "term": "retention",
+      "synonyms": [
+        "user retention",
+        "customer retention"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "churn",
+      "term": "churn",
+      "synonyms": [
+        "churn rate"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "conversion-rate",
+      "term": "conversion rate",
+      "synonyms": [
+        "conversion",
+        "conversions"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "engagement",
+      "term": "user engagement",
+      "synonyms": [
+        "engagement"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "active-users",
+      "term": "DAU/MAU",
+      "synonyms": [
+        "DAU",
+        "MAU",
+        "daily active users",
+        "monthly active users"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "nps",
+      "term": "NPS",
+      "synonyms": [
+        "net promoter score"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "csat",
+      "term": "CSAT",
+      "synonyms": [
+        "customer satisfaction"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "ltv",
+      "term": "LTV",
+      "synonyms": [
+        "CLV",
+        "customer lifetime value",
+        "lifetime value"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "cac",
+      "term": "CAC",
+      "synonyms": [
+        "customer acquisition cost"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "arr",
+      "term": "ARR",
+      "synonyms": [
+        "annual recurring revenue"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "mrr",
+      "term": "MRR",
+      "synonyms": [
+        "monthly recurring revenue"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "unit-economics",
+      "term": "unit economics",
+      "synonyms": [],
+      "category": "data"
+    },
+    {
+      "id": "statistical-significance",
+      "term": "statistical significance",
+      "synonyms": [
+        "statistically significant"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "data-visualization",
+      "term": "data visualization",
+      "synonyms": [
+        "data visualisation"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "hypothesis-driven",
+      "term": "hypothesis-driven",
+      "synonyms": [
+        "hypothesis testing",
+        "hypotheses"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "quantitative-analysis",
+      "term": "quantitative analysis",
+      "synonyms": [
+        "quantitative"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "qualitative-research",
+      "term": "qualitative research",
+      "synonyms": [
+        "qualitative"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "sql",
+      "term": "SQL",
+      "synonyms": [],
+      "category": "technical"
+    },
+    {
+      "id": "api",
+      "term": "API",
+      "synonyms": [
+        "APIs",
+        "REST API",
+        "RESTful"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "python",
+      "term": "Python",
+      "synonyms": [],
+      "category": "technical"
+    },
+    {
+      "id": "javascript",
+      "term": "JavaScript",
+      "synonyms": [
+        "JS"
       ],
       "category": "technical"
     },
@@ -110,21 +925,262 @@
       "term": "R",
       "synonyms": [
         "R programming",
-        "RStudio"
+        "RStudio",
+        "R language"
       ],
       "category": "technical"
     },
     {
-      "id": "cpp",
-      "term": "C++",
+      "id": "cloud",
+      "term": "cloud computing",
+      "synonyms": [
+        "cloud platforms",
+        "cloud infrastructure"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "aws",
+      "term": "AWS",
+      "synonyms": [
+        "Amazon Web Services"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "gcp",
+      "term": "GCP",
+      "synonyms": [
+        "Google Cloud",
+        "Google Cloud Platform"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "azure",
+      "term": "Azure",
+      "synonyms": [
+        "Microsoft Azure"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "microservices",
+      "term": "microservices",
+      "synonyms": [
+        "microservice architecture"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "system-design",
+      "term": "system design",
+      "synonyms": [
+        "system architecture",
+        "software architecture",
+        "technical architecture"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "ci-cd",
+      "term": "CI/CD",
+      "synonyms": [
+        "continuous integration",
+        "continuous delivery",
+        "continuous deployment"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "machine-learning",
+      "term": "machine learning",
+      "synonyms": [
+        "ML"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "ai",
+      "term": "AI",
+      "synonyms": [
+        "artificial intelligence"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "generative-ai",
+      "term": "generative AI",
+      "synonyms": [
+        "GenAI",
+        "LLM",
+        "LLMs",
+        "large language models"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "data-pipelines",
+      "term": "data pipelines",
+      "synonyms": [
+        "ETL",
+        "data engineering"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "technical-background",
+      "term": "technical background",
+      "synonyms": [
+        "computer science",
+        "CS degree"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "mobile-apps",
+      "term": "mobile apps",
+      "synonyms": [
+        "mobile app",
+        "iOS",
+        "Android",
+        "mobile development"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "web-applications",
+      "term": "web applications",
+      "synonyms": [
+        "web apps",
+        "web app"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "sdk",
+      "term": "SDK",
+      "synonyms": [
+        "SDKs"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "figma",
+      "term": "Figma",
       "synonyms": [],
       "category": "technical"
     },
     {
-      "id": "data-science",
-      "term": "data science",
-      "synonyms": [],
-      "category": "data"
+      "id": "scalability",
+      "term": "scalability",
+      "synonyms": [
+        "scalable"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "technical-debt",
+      "term": "technical debt",
+      "synonyms": [
+        "tech debt"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "ux",
+      "term": "UX",
+      "synonyms": [
+        "user experience",
+        "UX design",
+        "UI/UX"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "ui",
+      "term": "UI",
+      "synonyms": [
+        "user interface",
+        "UI design"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "saas",
+      "term": "SaaS",
+      "synonyms": [
+        "software as a service"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "b2b",
+      "term": "B2B",
+      "synonyms": [
+        "business-to-business"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "b2c",
+      "term": "B2C",
+      "synonyms": [
+        "business-to-consumer"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "fintech",
+      "term": "fintech",
+      "synonyms": [
+        "financial technology"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "payments",
+      "term": "payments",
+      "synonyms": [
+        "payment processing"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "ecommerce",
+      "term": "e-commerce",
+      "synonyms": [
+        "ecommerce",
+        "online retail"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "marketplace",
+      "term": "marketplace",
+      "synonyms": [
+        "marketplaces",
+        "two-sided marketplace"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "healthcare",
+      "term": "healthcare",
+      "synonyms": [
+        "health tech",
+        "healthtech",
+        "digital health"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "edtech",
+      "term": "edtech",
+      "synonyms": [
+        "education technology"
+      ],
+      "category": "domain"
     },
     {
       "id": "logistics",
@@ -135,26 +1191,98 @@
       "category": "domain"
     },
     {
-      "id": "it",
-      "term": "IT",
+      "id": "enterprise-software",
+      "term": "enterprise software",
       "synonyms": [
-        "information technology"
+        "enterprise customers",
+        "enterprise SaaS"
       ],
       "category": "domain"
     },
     {
-      "id": "api",
-      "term": "API",
-      "synonyms": [],
-      "category": "technical"
+      "id": "platform-products",
+      "term": "platform products",
+      "synonyms": [
+        "platform strategy",
+        "developer platform"
+      ],
+      "category": "domain"
     },
     {
-      "id": "agile",
-      "term": "Agile",
+      "id": "developer-tools",
+      "term": "developer tools",
       "synonyms": [
-        "scrum"
+        "devtools",
+        "developer experience"
       ],
-      "category": "delivery"
+      "category": "domain"
+    },
+    {
+      "id": "compliance",
+      "term": "regulatory compliance",
+      "synonyms": [
+        "compliance"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "gdpr",
+      "term": "GDPR",
+      "synonyms": [
+        "data privacy",
+        "privacy regulations"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "cybersecurity",
+      "term": "cybersecurity",
+      "synonyms": [
+        "information security",
+        "infosec"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "consumer-products",
+      "term": "consumer products",
+      "synonyms": [
+        "consumer apps"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "subscription",
+      "term": "subscription business",
+      "synonyms": [
+        "subscriptions",
+        "subscription model"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "advertising",
+      "term": "advertising",
+      "synonyms": [
+        "ad tech",
+        "adtech"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "crm",
+      "term": "CRM",
+      "synonyms": [
+        "Salesforce",
+        "HubSpot"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "customer-success",
+      "term": "customer success",
+      "synonyms": [],
+      "category": "domain"
     }
   ]
 }
