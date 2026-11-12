@@ -32,7 +32,7 @@ export interface PhraseHit {
  * Other acronyms (SQL, KPI, OKR, GTM) match in any case.
  */
 const CASE_SENSITIVE_ACRONYMS = new Set([
-  "am", "pm", "it", "us", "as", "or", "an", "on", "in", "at", "do", "go", "no", "so", "hr", "ok",
+  "am", "pm", "it", "us", "as", "or", "an", "on", "in", "at", "do", "go", "no", "so", "hr", "ok", "ml",
 ]);
 
 function isAcronym(t: Token): boolean {

@@ -6,8 +6,7 @@ of the JD's keywords your resume covers, which are missing, and a match score.
 **Everything runs in your browser.** No backend, no AI calls, no analytics, no
 external network requests at runtime.
 
-> Status: milestone 2 (matching engine). The full dictionary and UI arrive in
-> later milestones.
+> Status: milestone 3 (draft dictionary). The UI arrives in milestone 4.
 
 ## Run it locally
 
@@ -31,7 +30,7 @@ npm run build      # production build, same as Vercel runs
 | `lib/extractors/` | Keyword extractors (`dictionary.ts` now, TF-IDF later) |
 | `lib/match.ts` | Compares JD keywords with the resume |
 | `lib/scoring.ts` | Score weights (edit here to tune the score) |
-| `data/dictionary.json` | Keyword dictionary (starter draft; full draft in milestone 3) |
+| `data/dictionary.json` | Keyword dictionary (135-term draft, reviewed once) |
 | `corpus/` | Reserved for a future TF-IDF extractor |
 | `tests/` | Vitest unit tests |
 
@@ -62,7 +61,7 @@ Example: "PM" used 3 times (core-pm) weighs 3 x 1.5 = 4.5; "Agile" used once
   This uses a few simple suffix rules instead of a stemming library, because
   libraries like Porter merge unrelated words ("organization" and "organ").
 - Special tokens stay whole: C++, C#, .NET, A/B, CI/CD, UI/UX, P&L, R&D.
-- Acronyms that are also everyday words (PM, IT, US, HR...) only match in
+- Acronyms that are also everyday words or units (PM, IT, US, HR, ML...) only match in
   capitals, so "5 pm" is not "PM". Others (SQL, KPI, OKR) match in any case.
 - Very short words like "Go" or "R" never match alone; add a clear synonym
   ("Golang", "R programming") instead.
