@@ -1,0 +1,47 @@
+/*
+ * PLACEHOLDER design tokens for the "Neutral" theme (gray + teal).
+ * Replace these values with your real tokens.css when ready.
+ * Every color pair below was chosen to meet WCAG AA (4.5:1 for body text).
+ */
+:root {
+  /* Surfaces */
+  --color-bg: #f7f8f8;
+  --color-surface: #ffffff;
+  --color-border: #d4d8da;
+
+  /* Text */
+  --color-text: #1f2629;        /* on bg/surface: ~15:1 */
+  --color-text-muted: #525c61;  /* on surface: ~6.7:1 */
+
+  /* Brand (teal) */
+  --color-primary: #0f766e;     /* white text on it: ~5.5:1 */
+  --color-primary-hover: #115e59;
+  --color-on-primary: #ffffff;
+  --color-focus: #0d9488;
+
+  /* Match states (used for highlights in milestone 4) */
+  --color-match-bg: #ccfbf1;
+  --color-match-text: #134e4a;
+  --color-missing-bg: #fde8d8;
+  --color-missing-text: #7c2d12;
+  --color-error: #b42318;
+
+  /* Type */
+  --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-size-base: 1rem;
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.75rem;
+  --line-height: 1.55;
+
+  /* Spacing & shape */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --radius: 10px;
+  --touch-target: 44px;
+  --content-max: 960px;
+}
