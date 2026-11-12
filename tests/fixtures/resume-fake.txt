@@ -1,0 +1,16 @@
+Alex Example (FAKE person, synthetic test fixture, not a real resume)
+Product Manager
+
+Summary
+Product manager with 6 years in logistics software. Led cross functional squads and owned the roadmap for a freight tracking app.
+
+Experience
+Example Logistics Inc. (fictional), Product Manager, 2020-2025
+- Prioritized a backlog of 200+ items with engineering and design.
+- Defined KPIs for on-time delivery and reported them weekly.
+- Ran AB testing on onboarding flows, lifting activation 12%.
+- Wrote SQL to size opportunities.
+- Partnered with stakeholders in operations.
+
+Skills
+Agile, Jira, rapid prototyping, Python

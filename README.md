@@ -6,7 +6,7 @@ of the JD's keywords your resume covers, which are missing, and a match score.
 **Everything runs in your browser.** No backend, no AI calls, no analytics, no
 external network requests at runtime.
 
-> Status: milestone 1 (scaffold). The matcher, dictionary, and UI arrive in
+> Status: milestone 2 (matching engine). The full dictionary and UI arrive in
 > later milestones.
 
 ## Run it locally
@@ -26,10 +26,48 @@ npm run build      # production build, same as Vercel runs
 | --- | --- |
 | `app/` | Next.js App Router pages, layout, and CSS |
 | `app/tokens.css` | Theme variables (placeholder values; see below) |
-| `lib/` | Matching engine (milestone 2) |
-| `data/dictionary.json` | Keyword dictionary (milestone 3) |
+| `lib/normalize.ts` | Lowercasing, quote/dash cleanup, tokens, light stemming |
+| `lib/phraseMatcher.ts` | Whole-word and multi-word phrase matching |
+| `lib/extractors/` | Keyword extractors (`dictionary.ts` now, TF-IDF later) |
+| `lib/match.ts` | Compares JD keywords with the resume |
+| `lib/scoring.ts` | Score weights (edit here to tune the score) |
+| `data/dictionary.json` | Keyword dictionary (starter draft; full draft in milestone 3) |
 | `corpus/` | Reserved for a future TF-IDF extractor |
 | `tests/` | Vitest unit tests |
+
+## How the score works
+
+Each keyword found in the JD gets a weight:
+
+```
+weight = min(times the JD uses it, 3) x category multiplier
+score  = matched weight / total weight, as a percent
+```
+
+| Category | Multiplier |
+| --- | --- |
+| core-pm | 1.5 |
+| technical | 1.5 |
+| delivery, data, domain | 1 |
+
+Example: "PM" used 3 times (core-pm) weighs 3 x 1.5 = 4.5; "Agile" used once
+(delivery) weighs 1. Change the numbers in `lib/scoring.ts`.
+
+## Matching rules
+
+- Case-insensitive, accents ignored, curly quotes and all dash types treated alike.
+- Whole words only: "SQL" does not match inside "NoSQL"; "API" not inside "rapid".
+- "cross-functional", "cross functional" and "cross–functional" all match.
+- Plurals and verb endings match: stakeholders/stakeholder, prioritizing/prioritize.
+  This uses a few simple suffix rules instead of a stemming library, because
+  libraries like Porter merge unrelated words ("organization" and "organ").
+- Special tokens stay whole: C++, C#, .NET, A/B, CI/CD, UI/UX, P&L, R&D.
+- Acronyms that are also everyday words (PM, IT, US, HR...) only match in
+  capitals, so "5 pm" is not "PM". Others (SQL, KPI, OKR) match in any case.
+- Very short words like "Go" or "R" never match alone; add a clear synonym
+  ("Golang", "R programming") instead.
+- Synonyms count toward their main term.
+- In the JD, the longest phrase wins: "product roadmap" is not also counted as "roadmap".
 
 ## Theme tokens (placeholders)
 
@@ -69,4 +107,5 @@ to `main` deploys production. No environment variables are needed.
 - Resume text never leaves your browser.
 - Test fixtures use synthetic, fake text only. Never commit a real resume.
 - Job description text is treated as untrusted data. It is displayed as plain
-  text only, never run as code or HTML.
+  text only, never run as code or HTML. A test checks that instructions written
+  inside a JD do not change the result.

@@ -1,0 +1,160 @@
+{
+  "status": "draft",
+  "note": "STARTER DRAFT for milestone 2. Milestone 3 replaces this with 120-150 terms for review. Not verified.",
+  "entries": [
+    {
+      "id": "product-management",
+      "term": "Product Management",
+      "synonyms": [
+        "PM",
+        "product manager"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "go-to-market",
+      "term": "Go-to-Market",
+      "synonyms": [
+        "GTM",
+        "go to market"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "kpi",
+      "term": "KPI",
+      "synonyms": [
+        "key performance indicator"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "okr",
+      "term": "OKR",
+      "synonyms": [
+        "objectives and key results"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "sql",
+      "term": "SQL",
+      "synonyms": [],
+      "category": "technical"
+    },
+    {
+      "id": "ab-testing",
+      "term": "A/B testing",
+      "synonyms": [
+        "AB testing",
+        "split testing"
+      ],
+      "category": "data"
+    },
+    {
+      "id": "cross-functional",
+      "term": "cross-functional",
+      "synonyms": [
+        "cross functional",
+        "crossfunctional"
+      ],
+      "category": "delivery"
+    },
+    {
+      "id": "stakeholder-management",
+      "term": "stakeholder management",
+      "synonyms": [
+        "stakeholders",
+        "stakeholder alignment"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "roadmap",
+      "term": "roadmap",
+      "synonyms": [
+        "roadmapping"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-roadmap",
+      "term": "product roadmap",
+      "synonyms": [],
+      "category": "core-pm"
+    },
+    {
+      "id": "prioritization",
+      "term": "prioritization",
+      "synonyms": [
+        "prioritize"
+      ],
+      "category": "core-pm"
+    },
+    {
+      "id": "product-strategy",
+      "term": "product strategy",
+      "synonyms": [],
+      "category": "core-pm"
+    },
+    {
+      "id": "golang",
+      "term": "Go",
+      "synonyms": [
+        "Golang"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "r-language",
+      "term": "R",
+      "synonyms": [
+        "R programming",
+        "RStudio"
+      ],
+      "category": "technical"
+    },
+    {
+      "id": "cpp",
+      "term": "C++",
+      "synonyms": [],
+      "category": "technical"
+    },
+    {
+      "id": "data-science",
+      "term": "data science",
+      "synonyms": [],
+      "category": "data"
+    },
+    {
+      "id": "logistics",
+      "term": "logistics",
+      "synonyms": [
+        "supply chain"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "it",
+      "term": "IT",
+      "synonyms": [
+        "information technology"
+      ],
+      "category": "domain"
+    },
+    {
+      "id": "api",
+      "term": "API",
+      "synonyms": [],
+      "category": "technical"
+    },
+    {
+      "id": "agile",
+      "term": "Agile",
+      "synonyms": [
+        "scrum"
+      ],
+      "category": "delivery"
+    }
+  ]
+}
