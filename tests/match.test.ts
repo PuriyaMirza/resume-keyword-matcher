@@ -1,31 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { analyze } from "@/lib/analyze";
 import { matchResume } from "@/lib/match";
-import { DEFAULT_SCORING, keywordWeight, scorePercent } from "@/lib/scoring";
 import { extractor, fixture } from "./helpers";
 
 const jd = fixture("jd-synthetic.txt");
 const resume = fixture("resume-fake.txt");
-
-describe("scoring weights (frequency x category)", () => {
-  it("caps frequency at 3", () => {
-    expect(keywordWeight(1, "delivery")).toBe(1);
-    expect(keywordWeight(3, "delivery")).toBe(3);
-    expect(keywordWeight(10, "delivery")).toBe(3);
-  });
-
-  it("applies category multipliers", () => {
-    expect(keywordWeight(2, "core-pm")).toBe(3);
-    expect(keywordWeight(2, "technical")).toBe(3);
-    expect(keywordWeight(2, "data")).toBe(2);
-    expect(keywordWeight(2, undefined)).toBe(2 * DEFAULT_SCORING.defaultMultiplier);
-  });
-
-  it("score is a rounded percent, null with nothing to score", () => {
-    expect(scorePercent(1, 3)).toBe(33);
-    expect(scorePercent(0, 0)).toBeNull();
-  });
-});
 
 describe("fixture JD vs fake resume", () => {
   const result = analyze(jd, resume, extractor);
@@ -40,19 +19,29 @@ describe("fixture JD vs fake resume", () => {
     );
   });
 
-  it("finds the expected missing keywords, most-used first", () => {
+  it("finds the expected missing keywords, heaviest first", () => {
     expect(ids(result.missing)).toEqual(
       ["api", "go-to-market", "golang", "okr", "product-roadmap", "product-strategy", "r-language"].sort(),
     );
-    const countsInOrder = result.missing.map((k) => k.jdCount);
-    expect(countsInOrder).toEqual([...countsInOrder].sort((a, b) => b - a));
+    const weightsInOrder = result.missing.map((k) => k.weight);
+    expect(weightsInOrder).toEqual([...weightsInOrder].sort((a, b) => b - a));
+    // API is listed under "What you bring"; Golang and R only as a "Bonus".
+    expect(result.missing[0].id).toBe("api");
+    expect(result.missing.slice(-2).map((k) => k.id)).toEqual(["golang", "r-language"]);
   });
 
   it("computes the weighted score", () => {
-    // matched 18.5 of 29 weight units -> 64%
-    expect(result.matchedWeight).toBe(18.5);
-    expect(result.totalWeight).toBe(29);
-    expect(result.score).toBe(64);
+    // matched 26.75 of 38.3 weight units -> 70%
+    expect(result.matchedWeight).toBe(26.75);
+    expect(result.totalWeight).toBe(38.3);
+    expect(result.score).toBe(70);
+  });
+
+  it("weights the job title highest", () => {
+    const pm = result.matched.find((k) => k.id === "product-management")!;
+    expect(pm.placements).toEqual(["title", "required", "responsibilities"]);
+    expect(pm.weight).toBe((2.5 + 1.5 + 1.25) * 1.5);
+    expect(pm.reasons[0]).toBe("In the job title");
   });
 
   it("does not count 'rapid' as API", () => {
@@ -98,10 +87,26 @@ describe("untrusted JD text", () => {
 });
 
 describe("README worked example", () => {
-  it("PM x5 (found), SQL x1 (missing), Agile x2 (found) scores 81%", () => {
-    const r = matchResume(extractor.extract("PM PM PM PM PM. SQL. Agile and Agile."), "PM with Agile");
-    expect(r.matchedWeight).toBe(6.5);
-    expect(r.totalWeight).toBe(8);
-    expect(r.score).toBe(81);
+  const readmeJd = [
+    "Product Manager",
+    "Requirements",
+    "- 3+ years as a product manager.",
+    "- Strong SQL.",
+    "- Agile delivery experience.",
+    "Responsibilities",
+    "- Run Agile ceremonies.",
+    "Nice to have",
+    "- OKRs.",
+    "About us",
+    "We are an Agile company. Agile is in our name.",
+  ].join("\n");
+
+  it("title + required Product Management (found), SQL (missing), Agile x4 (found), OKR (missing) scores 74%", () => {
+    const r = matchResume(extractor.extract(readmeJd), "Product manager. Agile coach.");
+    const w = Object.fromEntries([...r.matched, ...r.missing].map((k) => [k.id, k.weight]));
+    expect(w).toEqual({ "product-management": 6, sql: 2.25, agile: 3.15, okr: 0.9 });
+    expect(r.matchedWeight).toBe(9.15);
+    expect(r.totalWeight).toBe(12.3);
+    expect(r.score).toBe(74);
   });
 });

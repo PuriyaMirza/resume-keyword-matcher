@@ -6,7 +6,7 @@ import { analyze, type AnalysisResult } from "@/lib/analyze";
 import { defaultExtractor } from "@/lib/defaultExtractor";
 import { RESUME_KEY, loadSaved, remove, save } from "@/lib/storage";
 import { ScoreCard } from "./ScoreCard";
-import { MatchedList, MissingList } from "./KeywordLists";
+import { ResumePlan } from "./ResumePlan";
 import { HighlightedJd } from "./HighlightedJd";
 
 export function Matcher() {
@@ -164,8 +164,7 @@ export function Matcher() {
             Results
           </h2>
           <ScoreCard result={result} />
-          <MissingList items={result.missing} />
-          <MatchedList items={result.matched} />
+          <ResumePlan result={result} />
           <HighlightedJd jd={analyzedJd} result={result} />
         </div>
       ) : (
@@ -175,8 +174,8 @@ export function Matcher() {
             <div>
               <p className="empty-title">Paste a job description and your resume, then tap Analyze.</p>
               <p className="muted small">
-                You&apos;ll get a match score, the keywords you&apos;re missing (with the sentence from the
-                job description), and the posting with keywords highlighted.
+                You&apos;ll get a match score and a resume plan: which keywords to add, which to show more
+                clearly, and which you already cover. The ones in the job title and requirements come first.
               </p>
             </div>
           </section>

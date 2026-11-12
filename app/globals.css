@@ -169,9 +169,6 @@ textarea[aria-invalid="true"] { border-color: var(--color-error); border-width: 
 .icon-missing { color: var(--color-missing-text); }
 .icon-matched { color: var(--color-primary); }
 
-.keyword-list { list-style: none; margin: 0; padding: 0; }
-.keyword-item { padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
-.keyword-item:first-child { border-top: none; padding-top: 0; }
 .keyword-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .keyword-name { font-weight: 700; }
 
@@ -184,7 +181,6 @@ textarea[aria-invalid="true"] { border-color: var(--color-error); border-width: 
   font-size: var(--font-size-sm);
   font-weight: 600;
 }
-.badge-muted { background: var(--color-bg); color: var(--color-text-muted); border: 1px solid var(--color-border); }
 
 .snippets { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; gap: var(--space-2); }
 .snippets li {
@@ -241,3 +237,43 @@ textarea[aria-invalid="true"] { border-color: var(--color-error); border-width: 
 .button-secondary:focus-visible, .button:focus-visible { outline-offset: 3px; }
 textarea:focus-visible { outline-offset: 0; border-color: var(--color-focus); }
 .results-title { scroll-margin-top: var(--space-4); }
+
+/* Resume plan */
+h4 { font-size: var(--font-size-base); line-height: 1.3; margin: 0 0 var(--space-2); }
+.plan-group { margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.plan-group-title { display: flex; align-items: center; gap: var(--space-2); font-weight: 700; }
+.plan-group-title svg { flex-shrink: 0; }
+.plan-note { margin: 0 0 var(--space-3); color: var(--color-text-muted); }
+
+/* A ranking, so keep the numbers; they sit in the left padding */
+.plan-list { margin: 0; padding-left: 1.75rem; }
+.plan-list > li::marker { font-weight: 700; color: var(--color-text-muted); }
+.plan-item { padding: var(--space-3) 0; border-top: 1px solid var(--color-border); min-width: 0; }
+.plan-item:first-child { border-top: none; padding-top: 0; }
+.plan-item .keyword-name { overflow-wrap: anywhere; }
+
+/* Priority is spelled out (High / Medium / Low); color only backs it up */
+.badge-high { background: var(--color-missing-bg); color: var(--color-missing-text); }
+.badge-medium { background: var(--color-match-bg); color: var(--color-match-text); }
+.badge-low { background: var(--color-bg); color: var(--color-text-muted); border: 1px solid var(--color-border); }
+
+.reasons {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+}
+.reason {
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+.plan-reason { margin: var(--space-2) 0 0; font-weight: 600; }
+.snippet-label { margin: var(--space-3) 0 0; color: var(--color-text-muted); font-weight: 600; }
+.snippets-resume li { border-left-color: var(--color-primary); }
+.show-all { margin-top: var(--space-3); width: 100%; }
+@media (min-width: 600px) { .show-all { width: auto; } }

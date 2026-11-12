@@ -1,0 +1,20 @@
+Job title: Growth Product Manager
+Northwind Parcel (fictional company, synthetic test fixture)
+
+## About us
+Northwind Parcel runs Agile teams. Agile is how we work, and Agile shapes our culture.
+
+**Key Responsibilities:**
+- Own the product roadmap for checkout.
+- Partner with stakeholders across finance. Experience with OKRs is a plus.
+
+Minimum qualifications
+- Strong SQL skills.
+- Track KPIs every week.
+
+Preferred Qualifications:
+- Exposure to Golang.
+- A/B testing experience is required.
+
+Benefits & perks
+- Learning budget. Data science lunch talks are a plus.

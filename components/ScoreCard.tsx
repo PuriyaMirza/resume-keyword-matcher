@@ -29,8 +29,8 @@ export function ScoreCard({ result }: { result: AnalysisResult }) {
       <div>
         <p className="score-label">{label(result.score)}</p>
         <p className="muted small">
-          {result.matched.length} of {total} keywords found in your resume. Keywords the JD repeats,
-          and core PM and technical keywords, count more.
+          {result.matched.length} of {total} keywords found in your resume. Keywords in the job title and
+          requirements count more, nice-to-haves less.
         </p>
       </div>
     </section>
