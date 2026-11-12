@@ -1,7 +1,7 @@
-# Résumé Keyword Matcher
+# Resume Keyword Matcher
 
-Paste a job description (JD) and your résumé as plain text. The app shows which
-of the JD's keywords your résumé covers, which are missing, and a match score.
+Paste a job description (JD) and your resume as plain text. The app shows which
+of the JD's keywords your resume covers, which are missing, and a match score.
 
 **Everything runs in your browser.** No backend, no AI calls, no analytics, no
 external network requests at runtime.
@@ -66,7 +66,7 @@ to `main` deploys production. No environment variables are needed.
 
 ## Privacy and safety
 
-- Résumé text never leaves your browser.
-- Test fixtures use synthetic, fake text only. Never commit a real résumé.
+- Resume text never leaves your browser.
+- Test fixtures use synthetic, fake text only. Never commit a real resume.
 - Job description text is treated as untrusted data. It is displayed as plain
   text only, never run as code or HTML.

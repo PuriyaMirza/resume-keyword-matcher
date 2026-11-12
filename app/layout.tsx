@@ -11,8 +11,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Résumé Keyword Matcher",
-  description: "Compare a job description with your résumé. Runs entirely in your browser.",
+  title: "Resume Keyword Matcher",
+  description: "Compare a job description with your resume. Runs entirely in your browser.",
 };
 
 export const viewport: Viewport = {

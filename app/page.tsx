@@ -5,10 +5,10 @@ export default function Home() {
     <main className="container">
       <header className="header">
         <FileSearch size={28} aria-hidden="true" />
-        <h1>Résumé Keyword Matcher</h1>
+        <h1>Resume Keyword Matcher</h1>
       </header>
       <p className="muted">
-        Paste a job description and your résumé to see which keywords you cover.
+        Paste a job description and your resume to see which keywords you cover.
         Everything runs in your browser. Nothing is uploaded.
       </p>
       <section className="card" aria-label="Status">
