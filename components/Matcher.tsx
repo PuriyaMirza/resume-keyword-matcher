@@ -42,8 +42,18 @@ export function Matcher() {
   }, [remember, resume]);
 
   useEffect(() => {
-    if (result) resultsRef.current?.focus();
+    const heading = resultsRef.current;
+    if (!result || !heading) return;
+    // Bring the score to the top of the screen (phones), then move keyboard focus there.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    heading.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+    heading.focus({ preventScroll: true });
   }, [result]);
+
+  // Hide the "paste both texts" error as soon as both boxes have text.
+  useEffect(() => {
+    if (error && jd.trim() && resume.trim()) setError("");
+  }, [error, jd, resume]);
 
   function onRememberChange(checked: boolean) {
     setRemember(checked);
@@ -61,6 +71,13 @@ export function Matcher() {
     setRemember(false);
     setHasSaved(false);
     setStatus("Saved resume cleared from this device.");
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      e.currentTarget.form?.requestSubmit();
+    }
   }
 
   function onAnalyze(e: React.FormEvent) {
@@ -88,6 +105,7 @@ export function Matcher() {
             id="jd"
             value={jd}
             onChange={(e) => setJd(e.target.value)}
+            onKeyDown={onKeyDown}
             rows={10}
             placeholder="Paste the full job posting here"
             aria-invalid={jdInvalid}
@@ -100,6 +118,7 @@ export function Matcher() {
             id="resume"
             value={resume}
             onChange={(e) => setResume(e.target.value)}
+            onKeyDown={onKeyDown}
             rows={10}
             placeholder="Paste your resume as plain text"
             aria-invalid={resumeInvalid}
@@ -117,16 +136,19 @@ export function Matcher() {
               </button>
             )}
           </div>
-          <p className="muted small" role="status" aria-live="polite">
+          <p className="muted small status" role="status" aria-live="polite">
             {status}
           </p>
         </div>
 
         <div className="actions">
-          <button type="submit" className="button">
+          <button type="submit" className="button" aria-describedby="shortcut-hint">
             <ScanSearch size={20} aria-hidden="true" />
             Analyze
           </button>
+          <p id="shortcut-hint" className="muted small shortcut-hint">
+            Tip: press Ctrl+Enter (⌘+Enter on Mac) in either box.
+          </p>
           {error && (
             <p id="form-error" className="error" role="alert">
               <TriangleAlert size={18} aria-hidden="true" />

@@ -65,7 +65,7 @@ body {
 
 /* ---------- Milestone 4: matcher UI ---------- */
 
-h2 { font-size: var(--font-size-lg); line-height: 1.3; margin: 0 0 var(--space-3); }
+h2, h3 { font-size: var(--font-size-lg); line-height: 1.3; margin: 0 0 var(--space-3); }
 .small { font-size: var(--font-size-sm); }
 .intro { margin-bottom: var(--space-4); }
 
@@ -230,3 +230,14 @@ textarea[aria-invalid="true"] { border-color: var(--color-error); border-width: 
   text-decoration: underline dashed;
   text-underline-offset: 3px;
 }
+
+/* Milestone 5 polish */
+.status { margin: 0; }
+.status:empty { min-height: 0; }
+.shortcut-hint { margin: 0; display: none; }
+/* Only show the keyboard tip where a real keyboard is likely */
+@media (hover: hover) and (pointer: fine) { .shortcut-hint { display: block; } }
+.button:active { transform: translateY(1px); }
+.button-secondary:focus-visible, .button:focus-visible { outline-offset: 3px; }
+textarea:focus-visible { outline-offset: 0; border-color: var(--color-focus); }
+.results-title { scroll-margin-top: var(--space-4); }

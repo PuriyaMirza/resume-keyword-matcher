@@ -5,7 +5,7 @@ export function HighlightedJd({ jd, result }: { jd: string; result: AnalysisResu
   const segments = buildSegments(jd, result.matched, result.missing);
   return (
     <section className="card" aria-labelledby="jd-heading">
-      <h2 id="jd-heading" className="section-title">Job description, highlighted</h2>
+      <h3 id="jd-heading" className="section-title">Job description, highlighted</h3>
       <p className="legend small">
         <mark className="hl hl-matched">matched</mark> <mark className="hl hl-missing">missing</mark>
       </p>

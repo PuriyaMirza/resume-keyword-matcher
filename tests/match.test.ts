@@ -96,3 +96,12 @@ describe("untrusted JD text", () => {
     expect(r.matched[0].jdSnippets[0]).toContain("<script>");
   });
 });
+
+describe("README worked example", () => {
+  it("PM x5 (found), SQL x1 (missing), Agile x2 (found) scores 81%", () => {
+    const r = matchResume(extractor.extract("PM PM PM PM PM. SQL. Agile and Agile."), "PM with Agile");
+    expect(r.matchedWeight).toBe(6.5);
+    expect(r.totalWeight).toBe(8);
+    expect(r.score).toBe(81);
+  });
+});
