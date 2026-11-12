@@ -79,14 +79,10 @@ export const byPriority = (a: ScoredKeyword, b: ScoredKeyword) =>
 export function dedupeSpans<T extends TextSpan>(hits: readonly T[]): T[] {
   const sorted = [...hits].sort((a, b) => a.start - b.start || b.end - a.end);
   const kept: T[] = [];
-  let reach = -1;
   for (const h of sorted) {
-    if (h.start < reach) {
-      reach = Math.max(reach, h.end);
-      continue;
-    }
+    const last = kept[kept.length - 1];
+    if (last && h.start < last.end) continue;
     kept.push(h);
-    reach = h.end;
   }
   return kept;
 }

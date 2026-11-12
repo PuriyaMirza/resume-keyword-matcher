@@ -25,23 +25,22 @@ export function lineSpans(text: string): TextSpan[] {
   return spans;
 }
 
-/**
- * The comparable "key" of a heading-shaped line, or null if the line is too
- * long to be a heading. Strips "#", bullets, numbering, **bold** and a final ":",
- * then lowercases and unifies "&"/"and", "you'll"/"you will" and apostrophes.
- *   "## What You’ll Do:" -> "what you will do"
- */
-export function headingKey(line: string): string | null {
-  let s = line.trim();
-  if (!s || s.length > MAX_HEADING_CHARS) return null;
-  s = s.replace(/^#{1,6}\s*/, "");
-  s = s.replace(/^(?:[•·▪◦\-–—]|\*(?!\*))+\s*/, "");
-  s = s.replace(/^\(?\d{1,2}[.)]\s+/, "");
+/** A list item: a bullet marker or "1." / "1)" followed by a space. Never a heading. */
+const BULLET_LINE = /^(?:[-•·▪◦*–—]|\(?\d{1,2}[.)])\s/;
+
+export const isBulletLine = (line: string) => BULLET_LINE.test(line.trim());
+
+/** Strip "#" and **bold** / __bold__ wrapping, then a final ":". */
+function stripHeadingMarks(line: string): string {
+  let s = line.trim().replace(/^#{1,6}\s*/, "");
   s = s.replace(/:\s*$/, "");
   s = s.replace(/^(\*\*|__)(.+)\1$/, "$2");
-  s = s.replace(/:\s*$/, "");
+  return s.replace(/:\s*$/, "").trim();
+}
 
-  let key = normalizeText(s)
+/** Lowercase and unify "&"/"and", "you'll"/"you will", apostrophes and punctuation. */
+function toKey(s: string): string | null {
+  const key = normalizeText(s)
     .replace(/&/g, " and ")
     .replace(/\byou'll\b/g, "you will")
     .replace(/\bwe're\b/g, "we are")
@@ -51,6 +50,35 @@ export function headingKey(line: string): string | null {
     .trim();
   if (!key || key.split(" ").length > MAX_HEADING_WORDS) return null;
   return key;
+}
+
+/**
+ * The comparable "key" of a heading-shaped line, or null if the line can't be
+ * a heading. Strips "#", **bold** and a final ":", then normalizes.
+ *   "## What You’ll Do:" -> "what you will do"
+ * Never a heading: lines over 60 characters, list items ("- Benefits"), and
+ * key-value lines with text after a colon ("Location: Remote").
+ */
+export function headingKey(line: string): string | null {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.length > MAX_HEADING_CHARS || BULLET_LINE.test(trimmed)) return null;
+  const s = stripHeadingMarks(trimmed);
+  if (s.includes(":")) return null;
+  return toKey(s);
+}
+
+/**
+ * For "Skills: SQL, Python" style lines: the key of the part before the colon
+ * and where the text after it starts. Null for anything else.
+ */
+export function inlineHeading(line: string): { key: string; valueStart: number } | null {
+  const trimmed = line.trim();
+  if (!trimmed || BULLET_LINE.test(trimmed)) return null;
+  const m = /^((?:#{1,6}\s*)?(?:\*\*|__)?([^:]{1,40}?)(?:\*\*|__)?\s*:(?:\*\*|__)?\s*)\S/.exec(line.replace(/^\s+/, ""));
+  if (!m) return null;
+  const key = toKey(m[2]);
+  if (!key) return null;
+  return { key, valueStart: line.length - line.replace(/^\s+/, "").length + m[1].length };
 }
 
 export type HeadingPatterns<K> = ReadonlyArray<readonly [K, RegExp]>;

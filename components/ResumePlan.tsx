@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CircleCheck, CirclePlus, FileText, ListChecks, Quote, TrendingUp } from "lucide-react";
-import type { PlanItem, ResumePlan as Plan } from "@/lib/match";
+import type { MatchResult, PlanItem } from "@/lib/match";
 import type { Priority } from "@/lib/scoring";
 
 /** How many "add" items show before the "Show all" button. */
@@ -72,11 +72,15 @@ function GroupHeading({ id, icon, title, count }: { id: string; icon: React.Reac
   );
 }
 
-export function ResumePlan({ plan }: { plan: Plan }) {
+export function ResumePlan({ result }: { result: MatchResult }) {
+  const plan = result.plan;
   // Remember which "add" list was expanded, so a new analysis starts collapsed.
   const [expandedFor, setExpandedFor] = useState<PlanItem[] | null>(null);
   const showAll = expandedFor === plan.add;
   const addItems = showAll ? plan.add : plan.add.slice(0, ADD_PREVIEW);
+  const nothingMatched = plan.strengthen.length === 0 && plan.covered.length === 0;
+  // No keywords in the JD: the score card already says so, and a plan would be empty.
+  if (result.score === null) return null;
 
   return (
     <section className="card" aria-labelledby="plan-heading">
@@ -126,7 +130,11 @@ export function ResumePlan({ plan }: { plan: Plan }) {
           count={plan.strengthen.length}
         />
         {plan.strengthen.length === 0 ? (
-          <p className="muted">Nothing to strengthen. Your key matches already show up well.</p>
+          <p className="muted">
+            {nothingMatched
+              ? "Nothing matched yet, so there is nothing to strengthen."
+              : "Nothing to strengthen. Your key matches already show up well."}
+          </p>
         ) : (
           <ol className="plan-list">
             {plan.strengthen.map((k) => (
@@ -144,7 +152,11 @@ export function ResumePlan({ plan }: { plan: Plan }) {
           count={plan.covered.length}
         />
         {plan.covered.length === 0 ? (
-          <p className="muted">Nothing covered yet. Start with the keywords above.</p>
+          <p className="muted">
+            {plan.add.length === 0
+              ? "Nothing fully covered yet. Work through the Strengthen list above."
+              : "Nothing covered yet. Start with the keywords above."}
+          </p>
         ) : (
           <ul className="chips">
             {plan.covered.map((k) => (

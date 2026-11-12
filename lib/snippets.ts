@@ -38,6 +38,11 @@ export function snippetAt(text: string, spans: TextSpan[], match: TextSpan, maxL
     start = winStart;
     end = winEnd;
   }
-  const body = text.slice(start, end).replace(BULLET_PREFIX, "").replace(/\s+/g, " ").trim();
+  let body = text.slice(start, end).replace(/\s+/g, " ").trim();
+  // Markdown heading marks ("# Title", "**Title**") are not part of the sentence.
+  body = body.replace(/^#{1,6}\s+/, "");
+  const bold = /^(\*\*|__)(.+)\1$/.exec(body);
+  if (bold) body = bold[2];
+  body = body.replace(BULLET_PREFIX, "").trim();
   return prefix + body + suffix;
 }

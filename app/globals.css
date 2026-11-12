@@ -181,7 +181,6 @@ textarea[aria-invalid="true"] { border-color: var(--color-error); border-width: 
   font-size: var(--font-size-sm);
   font-weight: 600;
 }
-.badge-muted { background: var(--color-bg); color: var(--color-text-muted); border: 1px solid var(--color-border); }
 
 .snippets { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; gap: var(--space-2); }
 .snippets li {

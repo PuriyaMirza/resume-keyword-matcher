@@ -65,16 +65,27 @@ more or less depending on **where** it is:
 | Where in the JD | Multiplier |
 | --- | --- |
 | Job title | 2.5 |
-| Requirements ("Requirements", "What you bring", "Qualifications"...) | 1.5 |
-| Responsibilities ("What you'll do", "About the role"...) | 1.25 |
-| Anywhere else (text before any heading) | 1 |
-| Nice-to-have ("Nice to have", "Preferred qualifications", "Bonus"...) | 0.6 |
-| Company or benefits text ("About us", "Benefits", "EEO"...) | 0.4 |
+| Requirements ("Requirements", "What you bring", "Qualifications", "Key requirements"...) | 1.5 |
+| Responsibilities ("What you'll do", "About the role", "Your responsibilities"...) | 1.25 |
+| Anywhere else (text before any heading, "About the job", "Overview", "Summary"...) | 1 |
+| Nice-to-have ("Nice to have", "Preferred qualifications", "Desired skills", "Bonus"...) | 0.6 |
+| Company or benefits text ("About us", "About <company>", "Benefits", "EEO"...) | 0.4 |
+
+A heading is a short line on its own, like "Requirements" or "## What you'll do:".
+These are never headings: list items ("- Benefits"), and lines with text after a
+colon ("Location: Remote", "Salary: $100k").
+
+The job title is the text after "Job title:" or "Title:" near the top, or after
+"Role:" or "Position:" in the first 5 lines (but not "Position: Full-time").
+Otherwise it is the first line, or the line after it if the first line is a
+heading such as "About the job". A title is at most 80 characters and doesn't end
+with a period.
 
 A sentence's own words can override its section: "SQL is a plus" counts as
 nice-to-have even under Requirements, and "A/B testing is required" counts as
 required even under Nice to have. This never changes the job title, and never
-lifts company or benefits text.
+lifts company or benefits text. "No degree required" counts as nice-to-have, and
+"minimum viable product" or "non-essential" are not requirements.
 
 Each keyword gets a weight:
 
@@ -110,7 +121,7 @@ We are an Agile company. Agile is in our name.
 
 | Keyword | Mentions | Category | Weight | In resume? |
 | --- | --- | --- | --- | --- |
-| PM | title 2.5, required 1.5 | core-pm | (2.5 + 1.5) x 1.5 = 6 | yes |
+| Product Management | title 2.5, required 1.5 | core-pm | (2.5 + 1.5) x 1.5 = 6 | yes |
 | SQL | required 1.5 | technical | 1.5 x 1.5 = 2.25 | no |
 | Agile | required 1.5, responsibilities 1.25, company 0.4, company 0.4 (best 3 count) | delivery | (1.5 + 1.25 + 0.4) x 1 = 3.15 | yes |
 | OKR | nice-to-have 0.6 | core-pm | 0.6 x 1.5 = 0.9 | no |
@@ -126,8 +137,8 @@ Labels: 75%+ is "Strong match", 50–74% "Partial match", under 50% "Low match".
 ## How the plan works
 
 Each keyword gets a priority from its weight: **High** at 2.25 or more,
-**Medium** at 1 or more, **Low** below 1. In the example above, PM, SQL and Agile
-are High and OKR is Low.
+**Medium** at 1 or more, **Low** below 1. In the example above, Product Management, SQL
+and Agile are High and OKR is Low.
 
 Then it goes into one group:
 
@@ -140,7 +151,8 @@ Then it goes into one group:
   keywords never need strengthening.
 
 The app finds resume sections the same way as JD sections: a short line such as
-"Experience", "Skills" or "Summary". If your resume has no headings, the "only
+"Experience", "Skills" or "Summary". A line like "Skills: SQL, Python, Jira" also
+counts as a skills list, for that line only. If your resume has no headings, the "only
 in skills" rule is skipped. Each group is sorted by weight, then by how often
 the JD mentions the keyword, then A to Z.
 

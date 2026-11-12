@@ -3,7 +3,8 @@
  * experience, or other), using the same short-heading-line rule as the JD.
  * Pure: same text in, same answer out.
  */
-import { classifyKey, findSections, headingKey, sectionAt, type HeadingPatterns, type Section } from "./headings";
+import type { TextSpan } from "./extractors/types";
+import { classifyKey, findSections, headingKey, inlineHeading, lineSpans, sectionAt, type HeadingPatterns, type Section } from "./headings";
 
 export type ResumePlacement = "skills" | "summary" | "experience" | "other";
 
@@ -31,13 +32,28 @@ export function classifyResumeHeading(line: string): ResumePlacement | null {
   return key === null ? null : classifyKey(key, RESUME_HEADINGS);
 }
 
+/**
+ * "Skills: SQL, Python, Jira" style lines. Each is a one-line skills section:
+ * it does not change which section the following lines belong to.
+ */
+export function inlineSkillLines(resumeText: string): TextSpan[] {
+  return lineSpans(resumeText).filter((line) => {
+    const inline = inlineHeading(resumeText.slice(line.start, line.end));
+    return inline !== null && classifyKey(inline.key, RESUME_HEADINGS) === "skills";
+  });
+}
+
 export function analyzeResumeStructure(resumeText: string): ResumeStructure {
   const sections = findSections(resumeText, classifyResumeHeading);
-  const hasHeadings = sections.length > 0;
+  const inlineSkills = inlineSkillLines(resumeText);
+  const hasHeadings = sections.length > 0 || inlineSkills.length > 0;
   return {
     hasHeadings,
     sections,
-    // Text above the first heading (name, headline) reads like a summary.
-    placementAt: (offset) => sectionAt(sections, offset)?.kind ?? (hasHeadings ? "summary" : "other"),
+    placementAt(offset) {
+      if (inlineSkills.some((l) => offset >= l.start && offset < l.end)) return "skills";
+      // Text above the first heading (name, headline) reads like a summary.
+      return sectionAt(sections, offset)?.kind ?? (hasHeadings ? "summary" : "other");
+    },
   };
 }

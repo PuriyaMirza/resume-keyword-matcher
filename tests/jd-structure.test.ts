@@ -61,7 +61,7 @@ describe("section headings", () => {
     ["Nice to haves", "preferred"],
     ["Preferred Qualifications", "preferred"],
     ["Bonus points", "preferred"],
-    ["- Desirable:", "preferred"],
+    ["Desirable:", "preferred"],
     ["About us", "boilerplate"],
     ["About Northwind Parcel", "boilerplate"],
     ["Benefits & perks", "boilerplate"],
@@ -69,7 +69,7 @@ describe("section headings", () => {
     ["EEO statement", "boilerplate"],
     ["How to apply", "boilerplate"],
     ["Why join us?", "boilerplate"],
-    ["1. Location", "boilerplate"],
+    ["Location", "boilerplate"],
   ])("%s -> %s", (line, kind) => {
     expect(classifyJdHeading(line)).toBe(kind);
   });

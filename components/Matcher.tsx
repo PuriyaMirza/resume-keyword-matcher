@@ -164,7 +164,7 @@ export function Matcher() {
             Results
           </h2>
           <ScoreCard result={result} />
-          <ResumePlan plan={result.plan} />
+          <ResumePlan result={result} />
           <HighlightedJd jd={analyzedJd} result={result} />
         </div>
       ) : (

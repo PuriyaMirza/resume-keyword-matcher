@@ -101,7 +101,7 @@ describe("README worked example", () => {
     "We are an Agile company. Agile is in our name.",
   ].join("\n");
 
-  it("title + required PM (found), SQL (missing), Agile x4 (found), OKR (missing) scores 74%", () => {
+  it("title + required Product Management (found), SQL (missing), Agile x4 (found), OKR (missing) scores 74%", () => {
     const r = matchResume(extractor.extract(readmeJd), "Product manager. Agile coach.");
     const w = Object.fromEntries([...r.matched, ...r.missing].map((k) => [k.id, k.weight]));
     expect(w).toEqual({ "product-management": 6, sql: 2.25, agile: 3.15, okr: 0.9 });
