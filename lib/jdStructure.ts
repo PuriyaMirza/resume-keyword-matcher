@@ -4,7 +4,7 @@
  * company/benefits text. Pure: same text in, same answer out.
  */
 import { PLACEMENTS, type Placement, type TextSpan } from "./extractors/types";
-import { classifyKey, findSections, headingKey, inlineHeading, isBulletLine, lineSpans, sectionAt, type HeadingPatterns, type Section } from "./headings";
+import { classifyCompoundKey, findSections, headingSplitKey, inlineHeading, isBulletLine, lineSpans, sectionAt, type HeadingPatterns, type Section } from "./headings";
 import { normalizeText } from "./normalize";
 import { sentenceSpans } from "./snippets";
 
@@ -40,8 +40,8 @@ const exact = (alternatives: string) => new RegExp(`^(?:${alternatives})$`);
  */
 const JD_HEADINGS: HeadingPatterns<SectionPlacement> = [
   ["preferred", exact("bonus points if you have|bonus if you have|its a plus if you have|it is a plus if you have|nice to have but not required|(?:nice to haves?|preferred|desired|desirable|bonus|good to have)(?: skills| experience| qualifications| requirements)?|bonus points|pluses|a plus|extra credit")],
-  ["required", exact("requirements|required qualifications|minimum qualifications|basic qualifications|key qualifications|qualifications|minimum requirements|basic requirements|key requirements|required experience|must haves?|what you will need|what you need|what you bring|what we are looking for|who you are|you have|skills(?: and experience)?|required skills|key skills|about you|experience")],
-  ["responsibilities", exact("responsibilities|key responsibilities|your responsibilities|what you will do|what you will be doing|what you will be responsible for|the role|about the role|about this role|role overview|your role|duties|key duties|day to day|in this role")],
+  ["required", exact("requirements|required qualifications|minimum qualifications|basic qualifications|key qualifications|qualifications|minimum requirements|basic requirements|key requirements|required experience|must haves?|what you will need|what you need|what you bring|what we are looking for|who you are|you have|skills(?: and experience)?|required skills|key skills|about you|experience|knowledge|abilities|ability|education|competencies|expertise|background|credentials")],
+  ["responsibilities", exact("responsibilities|key responsibilities|your responsibilities|what you will do|what you will be doing|what you will be responsible for|the role|about the role|about this role|role overview|your role|duties|key duties|day to day|in this role|functions|essential functions|accountabilities|tasks|scope")],
   // Neutral intros: not company text, not a skill list either.
   ["other", exact("about the job|about this job|about the position|about this position|about the opportunity|about the team|job description|overview|job overview|summary")],
   ["boilerplate", exact("about us|about the company|who we are|our company|what we offer|why join us|benefits|perks|compensation|salary|salary range|pay|location|locations|how to apply|equal opportunity(?: employer)?|eeo(?: statement)?|diversity(?: and inclusion| equity and inclusion)?|about .+")],
@@ -49,8 +49,8 @@ const JD_HEADINGS: HeadingPatterns<SectionPlacement> = [
 
 /** Section placement for a heading line, or null if it is not a known heading. */
 export function classifyJdHeading(line: string): SectionPlacement | null {
-  const key = headingKey(line);
-  return key === null ? null : classifyKey(key, JD_HEADINGS);
+  const key = headingSplitKey(line);
+  return key === null ? null : classifyCompoundKey(key, JD_HEADINGS);
 }
 
 const MAX_TITLE_CHARS = 80;
@@ -151,22 +151,73 @@ const REQUIRED_CUE = cueRegex(
   ].join("|"),
 );
 
-/** A sentence's own cue, if any. A preferred cue beats a required one ("not required"). */
-export function sentenceCue(sentence: string): "preferred" | "required" | null {
-  // normalizeText turns every dash into "-"; only a real hyphen joins words,
-  // so em/en dashes become spaces here.
+type Cue = "preferred" | "required";
+
+/** Normalized text for cue matching. normalizeText turns every dash into "-"; only a
+ *  real hyphen joins words, so em/en dashes become spaces here. */
+function cueText(sentence: string): string {
   const norm = normalizeText(sentence);
   let s = "";
   for (let i = 0; i < norm.length; i++) s += norm[i] === "-" && sentence[i] !== "-" ? " " : norm[i];
-  if (PREFERRED_CUE.test(s) || NO_X_REQUIRED.test(s)) return "preferred";
-  if (REQUIRED_CUE.test(s)) return "required";
-  return null;
+  return s;
+}
+
+/** Which kinds of cue a text contains. */
+function cueKinds(text: string): { preferred: boolean; required: boolean } {
+  const s = cueText(text);
+  return { preferred: PREFERRED_CUE.test(s) || NO_X_REQUIRED.test(s), required: REQUIRED_CUE.test(s) };
+}
+
+/** A sentence's own cue, if any. A preferred cue beats a required one ("not required"). */
+export function sentenceCue(sentence: string): Cue | null {
+  const { preferred, required } = cueKinds(sentence);
+  return preferred ? "preferred" : required ? "required" : null;
+}
+
+/** Where a sentence breaks into clauses: , ; ( ) but/though/while/although, dashes, " - ". */
+const CLAUSE_BREAK = /[,;()—–]|\s-\s|\s(?:but|though|while|although)\s/giu;
+
+/**
+ * Per-clause cues for a sentence that has both a required and a nice-to-have
+ * cue, as spans covering the whole sentence. A clause with no cue takes the
+ * nearest earlier clause's cue, or else the nearest later one. Returns null
+ * when the sentence has only one kind of cue (the whole sentence then uses it).
+ */
+export function clauseCues(sentence: string, offset = 0): Array<TextSpan & { cue: Cue | null }> | null {
+  const kinds = cueKinds(sentence);
+  if (!kinds.preferred || !kinds.required) return null;
+  // Clause content spans, skipping blank pieces.
+  const pieces: TextSpan[] = [];
+  let from = 0;
+  const add = (end: number) => {
+    if (sentence.slice(from, end).trim()) pieces.push({ start: from, end });
+  };
+  for (const m of sentence.matchAll(CLAUSE_BREAK)) {
+    add(m.index);
+    from = m.index + m[0].length;
+  }
+  add(sentence.length);
+  if (pieces.length < 2) return null;
+  const own = pieces.map((p) => sentenceCue(sentence.slice(p.start, p.end)));
+  return pieces.map((p, i) => {
+    const before = own.slice(0, i + 1).reverse().find((c) => c !== null);
+    const after = own.slice(i).find((c) => c !== null);
+    return {
+      // Each clause runs up to the start of the next one (separators go with the earlier clause).
+      start: offset + (i === 0 ? 0 : p.start),
+      end: offset + (i + 1 < pieces.length ? pieces[i + 1].start : sentence.length),
+      cue: before ?? after ?? null,
+    };
+  });
 }
 
 export function analyzeJdStructure(jdText: string): JdStructure {
   const titleSpan = detectTitle(jdText);
   const sections = findSections(jdText, classifyJdHeading, titleSpan);
-  const sentences = sentenceSpans(jdText).map((s) => ({ ...s, cue: sentenceCue(jdText.slice(s.start, s.end)) }));
+  const sentences = sentenceSpans(jdText).map((s) => {
+    const text = jdText.slice(s.start, s.end);
+    return { ...s, cue: sentenceCue(text), clauses: clauseCues(text, s.start) };
+  });
   const lines = lineSpans(jdText);
   const lineAt = (offset: number) => lines.find((l) => offset >= l.start && offset <= l.end);
   const inlineLines = inlineJdHeadings(jdText, lines, titleSpan);
@@ -179,7 +230,9 @@ export function analyzeJdStructure(jdText: string): JdStructure {
     // Cues never change company/benefits text: "a plus" there is not a skill ask.
     if (section === "boilerplate") return section;
     const sentence = sentences.find((s) => offset >= s.start && offset < s.end);
-    return sentence?.cue ?? section;
+    // A sentence with both kinds of cue is judged clause by clause.
+    const clause = sentence?.clauses?.find((c) => offset >= c.start && offset < c.end);
+    return (clause ? clause.cue : sentence?.cue) ?? section;
   }
 
   function isHeadingLine(offset: number): boolean {
@@ -202,7 +255,7 @@ function inlineJdHeadings(text: string, lines: TextSpan[], titleSpan: TextSpan |
     if (titleSpan && titleSpan.start >= line.start && titleSpan.start <= line.end) continue;
     const inline = inlineHeading(text.slice(line.start, line.end));
     if (!inline || /^(?:job title|title|position|role)$/.test(inline.key)) continue;
-    const kind = classifyKey(inline.key, JD_HEADINGS);
+    const kind = classifyCompoundKey(inline.splitKey, JD_HEADINGS);
     if (kind && INLINE_KINDS.has(kind)) found.push({ ...line, kind });
   }
   return found;

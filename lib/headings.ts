@@ -38,18 +38,33 @@ function stripHeadingMarks(line: string): string {
   return s.replace(/:\s*$/, "").trim();
 }
 
-/** Lowercase and unify "&"/"and", "you'll"/"you will", apostrophes and punctuation. */
-function toKey(s: string): string | null {
+/**
+ * Lowercase and unify "&"/"and", "you'll"/"you will" and apostrophes. Commas
+ * and slashes are kept (as "," and "/") so compound headings can be split;
+ * every other punctuation becomes a space.
+ */
+function toSplitKey(s: string): string | null {
   const key = normalizeText(s)
     .replace(/&/g, " and ")
     .replace(/\byou'll\b/g, "you will")
     .replace(/\bwe're\b/g, "we are")
     .replace(/\byou're\b/g, "you are")
     .replace(/'/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/[^a-z0-9,/]+/g, " ")
+    .replace(/\s*([,/])\s*/g, " $1 ")
+    .replace(/\s+/g, " ")
     .trim();
-  if (!key || key.split(" ").length > MAX_HEADING_WORDS) return null;
+  const flat = flatKey(key);
+  if (!flat || flat.split(" ").length > MAX_HEADING_WORDS) return null;
   return key;
+}
+
+/** A split key with commas and slashes turned into plain spaces. */
+const flatKey = (key: string) => key.replace(/[,/]/g, " ").replace(/\s+/g, " ").trim();
+
+function toKey(s: string): string | null {
+  const key = toSplitKey(s);
+  return key === null ? null : flatKey(key);
 }
 
 /**
@@ -60,25 +75,31 @@ function toKey(s: string): string | null {
  * key-value lines with text after a colon ("Location: Remote").
  */
 export function headingKey(line: string): string | null {
+  const key = headingSplitKey(line);
+  return key === null ? null : flatKey(key);
+}
+
+/** Like headingKey, but "," and "/" are kept as separators ("a / b, c") for compound headings. */
+export function headingSplitKey(line: string): string | null {
   const trimmed = line.trim();
   if (!trimmed || trimmed.length > MAX_HEADING_CHARS || BULLET_LINE.test(trimmed)) return null;
   const s = stripHeadingMarks(trimmed);
   if (s.includes(":")) return null;
-  return toKey(s);
+  return toSplitKey(s);
 }
 
 /**
  * For "Skills: SQL, Python" style lines: the key of the part before the colon
  * and where the text after it starts. Null for anything else.
  */
-export function inlineHeading(line: string): { key: string; valueStart: number } | null {
+export function inlineHeading(line: string): { key: string; splitKey: string; valueStart: number } | null {
   const trimmed = line.trim();
   if (!trimmed || BULLET_LINE.test(trimmed)) return null;
   const m = /^((?:#{1,6}\s*)?(?:\*\*|__)?([^:]{1,40}?)(?:\*\*|__)?\s*:(?:\*\*|__)?\s*)\S/.exec(line.replace(/^\s+/, ""));
   if (!m) return null;
-  const key = toKey(m[2]);
-  if (!key) return null;
-  return { key, valueStart: line.length - line.replace(/^\s+/, "").length + m[1].length };
+  const splitKey = toSplitKey(m[2]);
+  if (!splitKey) return null;
+  return { key: flatKey(splitKey), splitKey, valueStart: line.length - line.replace(/^\s+/, "").length + m[1].length };
 }
 
 export type HeadingPatterns<K> = ReadonlyArray<readonly [K, RegExp]>;
@@ -95,6 +116,31 @@ export function classifyKey<K>(key: string, patterns: HeadingPatterns<K>): K | n
   if (parts.length < 2) return null;
   const kinds = parts.map((p) => patterns.find(([, re]) => re.test(p))?.[0]);
   return kinds.every((k) => k !== undefined) ? (kinds[0] as K) : null;
+}
+
+/** Leading words that do not change what a heading means ("Essential duties" = "duties"). */
+const MODIFIER_WORDS = /^(?:(?:essential|key|core|main|primary|principal|general|major|specific|your|our|the|job|position|role specific|additional)\s+)+/;
+
+/**
+ * Classify a heading that may be several headings joined by "&", "and", ","
+ * or "/" ("Knowledge, Skills and Abilities"). Takes the key from
+ * headingSplitKey. Every part must be known and the first part decides.
+ * Each part is tried as written, then without leading modifier words.
+ */
+export function classifyCompoundKey<K>(splitKey: string, patterns: HeadingPatterns<K>): K | null {
+  const find = (part: string) => {
+    const hit = patterns.find(([, re]) => re.test(part));
+    if (hit) return hit[0];
+    const stripped = part.replace(MODIFIER_WORDS, "");
+    if (!stripped || stripped === part) return null;
+    return patterns.find(([, re]) => re.test(stripped))?.[0] ?? null;
+  };
+  const whole = find(flatKey(splitKey));
+  if (whole !== null) return whole;
+  const parts = splitKey.split(/\s*[,/]\s*|\s+and\s+/).map((p) => p.trim());
+  if (parts.length < 2 || parts.some((p) => !p)) return null;
+  const kinds = parts.map(find);
+  return kinds.every((k) => k !== null) ? (kinds[0] as K) : null;
 }
 
 export interface Section<K> {
