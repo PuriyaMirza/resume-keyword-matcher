@@ -42,6 +42,7 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --radius: 10px;
+  --shadow-popover: 0 4px 16px rgba(31, 38, 41, 0.16);
   --touch-target: 44px;
   --content-max: 960px;
 }

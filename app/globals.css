@@ -277,3 +277,50 @@ h4 { font-size: var(--font-size-base); line-height: 1.3; margin: 0 0 var(--space
 .snippets-resume li { border-left-color: var(--color-primary); }
 .show-all { margin-top: var(--space-3); width: 100%; }
 @media (min-width: 600px) { .show-all { width: auto; } }
+
+/* "?" help buttons: the button sits beside a heading, in the card's top-right corner */
+.help-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.help-row > :first-child { margin: 0; min-width: 0; flex: 1; }
+.score-card > .help-tip { margin-left: auto; align-self: flex-start; }
+/* Pull the 44px button into the corner so it does not make the row taller */
+.help-tip { position: relative; flex-shrink: 0; margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0; }
+.help-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+.help-button:hover, .help-button[aria-expanded="true"] { background: var(--color-match-bg); }
+.help-popup {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  right: 0;
+  width: min(20rem, calc(100vw - 2rem));
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popover);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: var(--line-height);
+  overflow-wrap: anywhere;
+}
+.help-popup[hidden] { display: none; }
+.help-popup p { margin: 0 0 var(--space-2); }
+.help-popup p:last-child { margin-bottom: 0; }

@@ -1,4 +1,5 @@
 import type { AnalysisResult } from "@/lib/analyze";
+import { HelpTip } from "./HelpTip";
 
 function label(score: number): string {
   if (score >= 75) return "Strong match";
@@ -11,7 +12,10 @@ export function ScoreCard({ result }: { result: AnalysisResult }) {
   if (result.score === null) {
     return (
       <section className="card" aria-labelledby="score-heading">
-        <h3 id="score-heading">No keywords found</h3>
+        <div className="help-row">
+          <h3 id="score-heading">No keywords found</h3>
+          <HelpTip topic="score" />
+        </div>
         <p className="muted">
           None of the dictionary&apos;s keywords appear in this job description. Check that you pasted
           the full posting.
@@ -33,6 +37,7 @@ export function ScoreCard({ result }: { result: AnalysisResult }) {
           requirements count more, nice-to-haves less.
         </p>
       </div>
+      <HelpTip topic="score" />
     </section>
   );
 }
