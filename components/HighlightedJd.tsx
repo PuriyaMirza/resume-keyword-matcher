@@ -1,11 +1,15 @@
 import { buildSegments } from "@/lib/highlight";
 import type { AnalysisResult } from "@/lib/analyze";
+import { HelpTip } from "./HelpTip";
 
 export function HighlightedJd({ jd, result }: { jd: string; result: AnalysisResult }) {
   const segments = buildSegments(jd, result.matched, result.missing);
   return (
     <section className="card" aria-labelledby="jd-heading">
-      <h3 id="jd-heading" className="section-title">Job description, highlighted</h3>
+      <div className="help-row">
+        <h3 id="jd-heading" className="section-title">Job description, highlighted</h3>
+        <HelpTip topic="highlighted" />
+      </div>
       <p className="legend small">
         <mark className="hl hl-matched">matched</mark> <mark className="hl hl-missing">missing</mark>
       </p>

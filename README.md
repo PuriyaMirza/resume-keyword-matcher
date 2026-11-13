@@ -24,7 +24,10 @@ external network requests at runtime.
 
    Each keyword shows a priority (High / Medium / Low), why it matters ("Listed as
    required", "In the job title"...), and the JD sentence that uses it.
-5. Optional: tick **Remember my resume** to keep it in this browser. Tap
+5. Each results section has a small **?** button in its top-right corner. Tap it
+   for a short plain-English explanation; tap it again, press Escape, or tap
+   elsewhere to close it.
+6. Optional: tick **Remember my resume** to keep it in this browser. Tap
    **Clear saved resume** (or untick) to delete it.
 
 ## Run it locally
@@ -72,6 +75,13 @@ more or less depending on **where** it is:
 | Company or benefits text ("About us", "About <company>", "Benefits", "EEO"...) | 0.4 |
 
 A heading is a short line on its own, like "Requirements" or "## What you'll do:".
+A heading can also join several known headings with "&", "and", "," or "/", such
+as "Knowledge, Skills and Abilities" or "Essential Duties & Responsibilities".
+Every part must be a known heading, and the first part decides the placement.
+Before a part is checked, leading words that don't change its meaning are dropped:
+essential, key, core, main, primary, principal, general, major, specific, your,
+our, the, job, position, role-specific and additional. ("Required", "minimum",
+"basic", "preferred", "desired" and "nice" are kept, because they change the meaning.)
 These are never headings: list items ("- Benefits"), and lines with text after a
 colon ("Location: Remote", "Salary: $100k"). A line like "Requirements: 5+ years
 of SQL" or "Nice to have: Python" sets the placement for that line only.
@@ -85,7 +95,11 @@ with a period.
 A sentence's own words can override its section: "SQL is a plus" counts as
 nice-to-have even under Requirements, and "A/B testing is required" counts as
 required even under Nice to have. This never changes the job title, and never
-lifts company or benefits text. "No degree required" counts as nice-to-have, and
+lifts company or benefits text. If one sentence has both kinds of cue ("SQL required,
+Tableau a plus."), it is cut into clauses at commas, semicolons, brackets, dashes,
+and the words "but", "though", "while" and "although", and each clause gets its
+own cue. A clause with no cue of its own takes the cue of the clause before it, or
+the one after it if it comes first. "No degree required" counts as nice-to-have, and
 "minimum viable product" or "non-essential" are not requirements.
 
 Each keyword gets a weight:

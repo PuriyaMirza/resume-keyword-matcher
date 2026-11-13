@@ -4,6 +4,8 @@ import { useState } from "react";
 import { CircleCheck, CirclePlus, FileText, ListChecks, Quote, TrendingUp } from "lucide-react";
 import type { MatchResult, PlanItem } from "@/lib/match";
 import type { Priority } from "@/lib/scoring";
+import { HelpTip } from "./HelpTip";
+import type { HelpTopic } from "./helpText";
 
 /** How many "add" items show before the "Show all" button. */
 const ADD_PREVIEW = 10;
@@ -63,12 +65,15 @@ function PlanEntry({ item }: { item: PlanItem }) {
   );
 }
 
-function GroupHeading({ id, icon, title, count }: { id: string; icon: React.ReactNode; title: string; count: number }) {
+function GroupHeading({ id, icon, title, count, help }: { id: string; icon: React.ReactNode; title: string; count: number; help: HelpTopic }) {
   return (
-    <h4 id={id} className="plan-group-title">
-      {icon}
-      {title} ({count})
-    </h4>
+    <div className="help-row">
+      <h4 id={id} className="plan-group-title">
+        {icon}
+        {title} ({count})
+      </h4>
+      <HelpTip topic={help} />
+    </div>
   );
 }
 
@@ -84,10 +89,13 @@ export function ResumePlan({ result }: { result: MatchResult }) {
 
   return (
     <section className="card" aria-labelledby="plan-heading">
-      <h3 id="plan-heading" className="section-title">
-        <ListChecks size={20} aria-hidden="true" className="icon-matched" />
-        Your resume plan
-      </h3>
+      <div className="help-row">
+        <h3 id="plan-heading" className="section-title">
+          <ListChecks size={20} aria-hidden="true" className="icon-matched" />
+          Your resume plan
+        </h3>
+        <HelpTip topic="plan" />
+      </div>
       <p className="muted small">Most important first, based on where and how often the posting mentions each keyword.</p>
 
       <div className="plan-group" role="group" aria-labelledby="plan-add-heading">
@@ -95,6 +103,7 @@ export function ResumePlan({ result }: { result: MatchResult }) {
           id="plan-add-heading"
           icon={<CirclePlus size={18} aria-hidden="true" className="icon-missing" />}
           title="Add if true"
+          help="add"
           count={plan.add.length}
         />
         <p className="plan-note small">Only add a keyword if it honestly reflects your experience.</p>
@@ -127,6 +136,7 @@ export function ResumePlan({ result }: { result: MatchResult }) {
           id="plan-strengthen-heading"
           icon={<TrendingUp size={18} aria-hidden="true" className="icon-matched" />}
           title="Strengthen"
+          help="strengthen"
           count={plan.strengthen.length}
         />
         {plan.strengthen.length === 0 ? (
@@ -149,6 +159,7 @@ export function ResumePlan({ result }: { result: MatchResult }) {
           id="plan-covered-heading"
           icon={<CircleCheck size={18} aria-hidden="true" className="icon-matched" />}
           title="Already covered"
+          help="covered"
           count={plan.covered.length}
         />
         {plan.covered.length === 0 ? (
